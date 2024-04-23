@@ -1,8 +1,9 @@
 'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+import Image from 'next/image';
+import { useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
+import Wrapper from "../../components/wrapper";
 
 // Static data for vehicles
 const EcycleDetails = [
@@ -46,6 +47,12 @@ const EcycleDetails = [
 ];
 
 export default function EcycleDetail(props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [status, setStatus] = useState("Active"); // Initialize with a default value
+  const [currentImageType, setCurrentImageType] = useState(null);
+  const [evCategory, setEvCategory] = useState('Top EVs');
+
   // Find the vehicle based on the provided ID
   const Ecycle = EcycleDetails.find((Ecycle) => Ecycle?.id === parseInt(props?.params?.id || 0));
 
@@ -54,10 +61,7 @@ export default function EcycleDetail(props) {
     return <div>Ecycle not found</div>;
   }
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active"); // Initialize with a default value
-  const [currentImageType, setCurrentImageType] = useState(null);
+  
 
   const handleImageClick = (index, imageType) => {
     setPhotoIndex(index);
@@ -108,7 +112,7 @@ export default function EcycleDetail(props) {
 
 
 
-const [evCategory, setEvCategory] = useState('Top EVs'); 
+ 
 
 
 const handleEvCategoryChange = (event) => {
@@ -129,7 +133,7 @@ const handleEvCategoryChange = (event) => {
               <div className="flex space-x-2">
                 {Ecycle.interiorImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'interior')}>
-                    <img src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
                   </div>
                 ))}
               </div>
@@ -139,7 +143,7 @@ const handleEvCategoryChange = (event) => {
               <div className="flex space-x-2">
                 {Ecycle.frontImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'front')}>
-                    <img src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                   </div>
                 ))}
               </div>
@@ -149,7 +153,7 @@ const handleEvCategoryChange = (event) => {
               <div className="flex space-x-2">
                 {Ecycle.sideImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'side')}>
-                    <img src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
                   </div>
                 ))}
               </div>

@@ -1,8 +1,9 @@
 'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+import Image from 'next/image';
+import { useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
+import Wrapper from "../../components/wrapper";
 
 
 // Static data for vehicles
@@ -56,6 +57,12 @@ const AutoDetails = [
 ];
 
 export default function AutoDetail(props) {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [status, setStatus] = useState("Active"); // Initialize with a default value
+  const [currentImageType, setCurrentImageType] = useState(null);
+  const [evCategory, setEvCategory] = useState('Top EVs'); 
   // Find the vehicle based on the provided ID
   const Auto = AutoDetails.find((Auto) => Auto?.id === parseInt(props?.params?.id || 0));
 
@@ -64,11 +71,7 @@ export default function AutoDetail(props) {
     return <div>Auto not found</div>;
   }
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active"); // Initialize with a default value
-  const [currentImageType, setCurrentImageType] = useState(null);
-
+  
   const handleImageClick = (index, imageType) => {
     setPhotoIndex(index);
     setCurrentImageType(imageType);
@@ -117,8 +120,7 @@ export default function AutoDetail(props) {
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
   };  
-  const [evCategory, setEvCategory] = useState('Top EVs'); 
-
+  
 
   const handleEvCategoryChange = (event) => {
       setEvCategory(event.target.value);
@@ -139,7 +141,7 @@ export default function AutoDetail(props) {
               <div className="flex space-x-2">
                 {Auto.interiorImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'interior')}>
-                    <img src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
                   </div>
                 ))}
               </div>
@@ -149,7 +151,7 @@ export default function AutoDetail(props) {
               <div className="flex space-x-2">
                 {Auto.frontImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'front')}>
-                    <img src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                   </div>
                 ))}
               </div>
@@ -159,7 +161,7 @@ export default function AutoDetail(props) {
               <div className="flex space-x-2">
                 {Auto.sideImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'side')}>
-                    <img src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
+                    <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
                   </div>
                 ))}
               </div>
