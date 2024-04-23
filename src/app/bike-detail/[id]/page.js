@@ -1,9 +1,9 @@
 'use client'
-import Image from 'next/image';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Wrapper from "../../components/wrapper";
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Wrapper from "../../components/wrapper";
+import Image from 'next/image'
 
 
 const BikeDetails = [
