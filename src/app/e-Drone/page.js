@@ -153,6 +153,7 @@ const Table = () => {
                >
               <span className="mdi mdi-eye"></span> 
               </Link>
+
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>

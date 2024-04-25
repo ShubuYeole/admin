@@ -27,24 +27,20 @@ const TractorDetails = [
     vehicleDescription: "bdfgdf",
     transmissionType: null,
     interiorImages: [
-      "uploads\\interiorImages-1712904290311",
-      "uploads\\interiorImages-1712904290312",
-      "uploads\\interiorImages-1712904290324"
+      "/images/property/BMW.jpeg",
+
     ],
     frontImages: [
-      "uploads\\frontImages-1712904290292",
-      "uploads\\frontImages-1712904290297",
-      "uploads\\frontImages-1712904290298"
-    ],
+      "/images/property/BMW.jpeg",
+
+     ],
     sideImages: [
-      "uploads\\sideImages-1712904290299",
-      "uploads\\sideImages-1712904290299",
-      "uploads\\sideImages-1712904290299"
+      "/images/property/BMW.jpeg",
+
     ],
     backImages: [
-      "uploads\\backImages-1712904290300",
-      "uploads\\backImages-1712904290300",
-      "uploads\\backImages-1712904290309"
+      "/images/property/BMW.jpeg",
+
     ],
     price: {
       "currency": "USD",
@@ -85,13 +81,16 @@ export default function TractorDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Tractor.interiorImages.length - 1)% Tractor.interiorImages.length);
+        setPhotoIndex((photoIndex + Tractor.interiorImages.length - 1) % Tractor.interiorImages.length);
         break;
       case 'front':
         setPhotoIndex((photoIndex + Tractor.frontImages.length - 1) % Tractor.frontImages.length);
         break;
       case 'side':
         setPhotoIndex((photoIndex + Tractor.sideImages.length - 1) % Tractor.sideImages.length);
+        break;
+      case 'back':
+        setPhotoIndex((photoIndex + Tractor.backImages.length - 1) % Tractor.backImages.length);
         break;
       default:
         break;
@@ -109,10 +108,14 @@ export default function TractorDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + 1) % Tractor.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Tractor.backImages.length);
+        break;
       default:
         break;
     }
   };
+
 
 // Function to handle status change
   const handleStatusChange = (event) => {
@@ -134,41 +137,54 @@ export default function TractorDetail(props) {
     <>
       <Wrapper>     
       <section className="relative md:pb-24 pb-16 mt-20 px-4">
-        <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
-          <h1 className="text-2xl font-bold mb-4">Tractor Details</h1>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
-              <div className="flex space-x-2">
-                {Tractor.interiorImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'interior')}>
-                    <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
-                  </div>
-                ))}
+          <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold mb-4">Tractor Details</h1>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
+                <div className="flex space-x-2">
+                  {Tractor.interiorImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'interior')}>
+                      <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Front Images</label>
-              <div className="flex space-x-2">
-                {Tractor.frontImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'front')}>
-                    <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
-                  </div>
-                ))}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Front Images</label>
+                <div className="flex space-x-2">
+                  {Tractor.frontImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'front')}>
+                      <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Side Images</label>
-              <div className="flex space-x-2">
-                {Tractor.sideImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'side')}>
-                    <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
-                  </div>
-                ))}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Side Images</label>
+                <div className="flex space-x-2">
+                  {Tractor.sideImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'side')}>
+                      <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
               </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+                <div className="flex space-x-2">
+                  {Tractor.backImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                      <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
+
           </div>
-        </div>
+        
               <div className="grid grid-cols-2 gap-5">
               
   <div className="mb-4">
@@ -379,13 +395,29 @@ export default function TractorDetail(props) {
 </div>
            </section>
            {isOpen && (
-        <Lightbox
-          mainSrc={currentImageType === 'interior' ? Tractor.interiorImages[photoIndex] : currentImageType === 'front' ? Tractor.frontImages[photoIndex] : Auto.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + 1) % Tractor.interiorImages.length] : currentImageType === 'front' ? Tractor.frontImages[(photoIndex + 1) % Tractor.frontImages.length] : Tractor.sideImages[(photoIndex + 1) % Tractor.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + Tractor.interiorImages.length - 1) % Tractor.interiorImages.length] : currentImageType === 'front' ? Tractor.frontImages[(photoIndex + Tractor.frontImages.length - 1) % Tractor.frontImages.length] : Tractor.sideImages[(photoIndex + Tractor.sideImages.length - 1) % Tractor.sideImages.length]}
-          onCloseRequest={closeLightbox}
-          onMovePrevRequest={goToPrevious}
-          onMoveNextRequest={goToNext}
+          <Lightbox
+            mainSrc={
+              currentImageType === 'interior' ? Tractor.interiorImages[photoIndex] :
+              currentImageType === 'front' ? Tractor.frontImages[photoIndex] :
+              currentImageType === 'side' ? Tractor.sideImages[photoIndex] :
+              Tractor.backImages[photoIndex]
+            }
+            nextSrc={
+              currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + 1) % Tractor.interiorImages.length] :
+              currentImageType === 'front' ? Tractor.frontImages[(photoIndex + 1) % Tractor.frontImages.length] :
+              currentImageType === 'side' ? Tractor.sideImages[(photoIndex + 1) % Tractor.sideImages.length] :
+              Tractor.backImages[(photoIndex + 1) % Tractor.backImages.length]
+            }
+            prevSrc={
+              currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + Tractor.interiorImages.length - 1) % Tractor.interiorImages.length] :
+              currentImageType === 'front' ? Tractor.frontImages[(photoIndex + Tractor.frontImages.length - 1) % Tractor.frontImages.length] :
+              currentImageType === 'side' ? Tractor.sideImages[(photoIndex + Tractor.sideImages.length - 1) % Tractor.sideImages.length] :
+              Tractor.backImages[(photoIndex + Tractor.backImages.length - 1) % Tractor.backImages.length]
+            }
+            onCloseRequest={closeLightbox}
+            onMovePrevRequest={goToPrevious}
+            onMoveNextRequest={goToNext}
+
         />
       )}
       </Wrapper>

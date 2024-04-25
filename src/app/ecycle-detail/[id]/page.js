@@ -27,16 +27,16 @@ const EcycleDetails = [
     vehicleDescription: "dmkdkdkdk",
     transmissionType: "",
     interiorImages: [
-      "uploads\\interiorImages-1712921939791"
+      "/images/property/BMW.jpeg",
     ],
     frontImages: [
-      "uploads\\frontImages-1712921939785"
+      "/images/property/BMW.jpeg",
     ],
     sideImages: [
-      "uploads\\sideImages-1712921939790"
+      "/images/property/BMW.jpeg",
     ],
     backImages: [
-      "uploads\\backImages-1712921939791"
+      "/images/property/BMW.jpeg",
     ],
     price: {
       currency: "USD",
@@ -84,6 +84,9 @@ export default function EcycleDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + Ecycle.sideImages.length - 1) % Ecycle.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + Ecycle.backImages.length - 1) % Ecycle.backImages.length);
+        break;
       default:
         break;
     }
@@ -100,10 +103,14 @@ export default function EcycleDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + 1) % Ecycle.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Ecycle.backImages.length);
+        break;
       default:
         break;
     }
   };
+
 
   // Function to handle status change
   const handleStatusChange = (event) => {
@@ -123,7 +130,8 @@ const handleEvCategoryChange = (event) => {
   // Render the vehicle details
   return (
     <>
-      <Wrapper>     
+        
+      <Wrapper>
       <section className="relative md:pb-24 pb-16 mt-20 px-4">
         <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl font-bold mb-4">Ecycle Details</h1>
@@ -158,6 +166,18 @@ const handleEvCategoryChange = (event) => {
                 ))}
               </div>
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+              <div className="flex space-x-2">
+                {Ecycle.backImages.map((image, index) => (
+                  <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                    <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+
           </div>
         </div>
 
@@ -327,9 +347,33 @@ const handleEvCategoryChange = (event) => {
 
       {isOpen && (
         <Lightbox
-          mainSrc={currentImageType === 'interior' ? Ecycle.interiorImages[photoIndex] : currentImageType === 'front' ? Ecycle.frontImages[photoIndex] : Ecycle.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Ecycle.interiorImages[(photoIndex + 1) % Ecycle.interiorImages.length] : currentImageType === 'front' ? Ecycle.frontImages[(photoIndex + 1) % Ecycle.frontImages.length] : Ecycle.sideImages[(photoIndex + 1) % Ecycle.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Ecycle.interiorImages[(photoIndex + Ecycle.interiorImages.length - 1) % Ecycle.interiorImages.length] : currentImageType === 'front' ? Ecycle.frontImages[(photoIndex + Ecycle.frontImages.length - 1) % Ecycle.frontImages.length] : Ecycle.sideImages[(photoIndex + Ecycle.sideImages.length - 1) % Ecycle.sideImages.length]}
+          mainSrc={
+            currentImageType === 'interior'
+              ? Ecycle.interiorImages[photoIndex]
+              : currentImageType === 'front'
+              ? Ecycle.frontImages[photoIndex]
+              : currentImageType === 'side'
+              ? Ecycle.sideImages[photoIndex]
+              : Ecycle.backImages[photoIndex]
+          }
+          nextSrc={
+            currentImageType === 'interior'
+              ? Ecycle.interiorImages[(photoIndex + 1) % Ecycle.interiorImages.length]
+              : currentImageType === 'front'
+              ? Ecycle.frontImages[(photoIndex + 1) % Ecycle.frontImages.length]
+              : currentImageType === 'side'
+              ? Ecycle.sideImages[(photoIndex + 1) % Ecycle.sideImages.length]
+              : Ecycle.backImages[(photoIndex + 1) % Ecycle.backImages.length]
+          }
+          prevSrc={
+            currentImageType === 'interior'
+              ? Ecycle.interiorImages[(photoIndex + Ecycle.interiorImages.length - 1) % Ecycle.interiorImages.length]
+              : currentImageType === 'front'
+              ? Ecycle.frontImages[(photoIndex + Ecycle.frontImages.length - 1) % Ecycle.frontImages.length]
+              : currentImageType === 'side'
+              ? Ecycle.sideImages[(photoIndex + Ecycle.sideImages.length - 1) % Ecycle.sideImages.length]
+              :Ecycle.backImages[(photoIndex + Ecycle.backImages.length - 1) % Ecycle.backImages.length]
+          }
           onCloseRequest={closeLightbox}
           onMovePrevRequest={goToPrevious}
           onMoveNextRequest={goToNext}

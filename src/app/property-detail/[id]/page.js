@@ -28,14 +28,25 @@ const CarDetails = [
     vehicleDescription: "BESTTTT",
     transmissionType: "Manual",
     interiorImages: [
-      "uploads\\interiorImages-1712753725328",
-      "uploads\\interiorImages-1712753725328",
-      "uploads\\interiorImages-1712753725328"
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg"
     ],
     frontImages: [
-      "uploads\\frontImages-1712753725325",
-      "uploads\\frontImages-1712753725326",
-      "uploads\\frontImages-1712753725326"
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg"
+
+    ],
+    sideImages: [
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg"
+    ],
+    backImages: [
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg",
+      "/images/property/BMW.jpeg"
     ],
   },
   // Add more vehicles as needed
@@ -56,7 +67,8 @@ export default function CarDetailsDetail(props) {
   if (!Car) {
     return <div>Car not found</div>;
   }
-
+  
+  
 
   const handleImageClick = (index, imageType) => {
     setPhotoIndex(index);
@@ -71,10 +83,16 @@ export default function CarDetailsDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Car.interiorImages.length - 1)% Car.interiorImages.length);
+        setPhotoIndex((photoIndex + Car.interiorImages.length - 1) % Car.interiorImages.length);
         break;
       case 'front':
         setPhotoIndex((photoIndex + Car.frontImages.length - 1) % Car.frontImages.length);
+        break;
+      case 'side':
+        setPhotoIndex((photoIndex + Car.sideImages.length - 1) % Car.sideImages.length);
+        break;
+      case 'back':
+        setPhotoIndex((photoIndex + Car.backImages.length - 1) % Car.backImages.length);
         break;
       default:
         break;
@@ -89,10 +107,17 @@ export default function CarDetailsDetail(props) {
       case 'front':
         setPhotoIndex((photoIndex + 1) % Car.frontImages.length);
         break;
+      case 'side':
+        setPhotoIndex((photoIndex + 1) % Car.sideImages.length);
+        break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Car.backImages.length);
+        break;
       default:
         break;
     }
   };
+
 
   // Function to handle status change
   const handleStatusChange = (event) => {
@@ -114,7 +139,7 @@ const handleEvCategoryChange = (event) => {
   return (
     <>
       <Wrapper>     
-        <section className="relative md:pb-24 pb-16 mt-20 px-4">
+      <section className="relative md:pb-24 pb-16 mt-20 px-4">
           <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
             <h1 className="text-2xl font-bold mb-4">Car Details</h1>
             <div className="grid grid-cols-1 gap-4">
@@ -136,22 +161,33 @@ const handleEvCategoryChange = (event) => {
                       <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                     </div>
                   ))}
-<div className="mb-4">
-  <label className="block text-gray-700 font-bold mb-2">Side Images</label>
-  <div className="flex space-x-2">
-    {Car.sideImages.map((image, index) => (
-      <div key={index} onClick={() => handleImageClick(index, 'side')}>
-        <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
-      </div>
-    ))}
-  </div>
-</div>
-
-
                 </div>
               </div>
-            </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Side Images</label>
+                <div className="flex space-x-2">
+                  {Car.sideImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'side')}>
+                      <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+                <div className="flex space-x-2">
+                  {Car.backImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                      <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
           </div>
+        </div>
+        
+
 
 
               <div className="grid grid-cols-2 gap-5">
@@ -355,13 +391,29 @@ const handleEvCategoryChange = (event) => {
         
         </section>
         {isOpen && (
-        <Lightbox
-          mainSrc={currentImageType === 'interior' ? Car.interiorImages[photoIndex] : currentImageType === 'front' ? Car.frontImages[photoIndex] : Car.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Car.interiorImages[(photoIndex + 1) % Car.interiorImages.length] : currentImageType === 'front' ? Car.frontImages[(photoIndex + 1) % Car.frontImages.length] : Car.sideImages[(photoIndex + 1) % Car.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Car.interiorImages[(photoIndex + Car.interiorImages.length - 1) % Car.interiorImages.length] : currentImageType === 'front' ? Car.frontImages[(photoIndex + Car.frontImages.length - 1) % Car.frontImages.length] : Car.sideImages[(photoIndex + Car.sideImages.length - 1) % Car.sideImages.length]}
-          onCloseRequest={closeLightbox}
-          onMovePrevRequest={goToPrevious}
-          onMoveNextRequest={goToNext}
+          <Lightbox
+            mainSrc={
+              currentImageType === 'interior' ? Car.interiorImages[photoIndex] :
+              currentImageType === 'front' ? Car.frontImages[photoIndex] :
+              currentImageType === 'side' ? Car.sideImages[photoIndex] :
+              Car.backImages[photoIndex]
+            }
+            nextSrc={
+              currentImageType === 'interior' ? Car.interiorImages[(photoIndex + 1) % Car.interiorImages.length] :
+              currentImageType === 'front' ? Car.frontImages[(photoIndex + 1) % Car.frontImages.length] :
+              currentImageType === 'side' ? Car.sideImages[(photoIndex + 1) % Car.sideImages.length] :
+              Car.backImages[(photoIndex + 1) % Car.backImages.length]
+            }
+            prevSrc={
+              currentImageType === 'interior' ? Car.interiorImages[(photoIndex + Car.interiorImages.length - 1) % Car.interiorImages.length] :
+              currentImageType === 'front' ? Car.frontImages[(photoIndex + Car.frontImages.length - 1) % Car.frontImages.length] :
+              currentImageType === 'side' ? Car.sideImages[(photoIndex + Car.sideImages.length - 1) % Car.sideImages.length] :
+              Car.backImages[(photoIndex + Car.backImages.length - 1) % Car.backImages.length]
+            }
+            onCloseRequest={closeLightbox}
+            onMovePrevRequest={goToPrevious}
+            onMoveNextRequest={goToNext}
+
         />
       )}
       </Wrapper>

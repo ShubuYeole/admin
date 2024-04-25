@@ -28,24 +28,16 @@ const AutoDetails = [
   vehicleDescription: "jdsdcjdasc",
   transmissionType: "Manual",
   interiorImages: [
-    "uploads\\interiorImages-1712904608299",
-    "uploads\\interiorImages-1712904608300",
-    "uploads\\interiorImages-1712904608300"
+    "/images/property/BMW.jpeg",
   ],
   frontImages: [
-    "uploads\\frontImages-1712904608295",
-    "uploads\\frontImages-1712904608295",
-    "uploads\\frontImages-1712904608296"
+    "/images/property/BMW.jpeg",
   ],
   sideImages: [
-    "uploads\\sideImages-1712904608296",
-    "uploads\\sideImages-1712904608296",
-    "uploads\\sideImages-1712904608296"
+    "/images/property/BMW.jpeg",
   ],
   backImages: [
-    "uploads\\backImages-1712904608299",
-    "uploads\\backImages-1712904608299",
-    "uploads\\backImages-1712904608299"
+    "/images/property/BMW.jpeg",
   ],
   price: {
     currency: "SGD",
@@ -93,6 +85,9 @@ export default function AutoDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + Auto.sideImages.length - 1) % Auto.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + Auto.backImages.length - 1) % Auto.backImages.length);
+        break;
       default:
         break;
     }
@@ -109,10 +104,14 @@ export default function AutoDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + 1) % Auto.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Auto.backImages.length);
+        break;
       default:
         break;
     }
   };
+
 
 
 
@@ -133,41 +132,53 @@ export default function AutoDetail(props) {
     <>
       <Wrapper>     
       <section className="relative md:pb-24 pb-16 mt-20 px-4">
-        <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
-          <h1 className="text-2xl font-bold mb-4">Auto Details</h1>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
-              <div className="flex space-x-2">
-                {Auto.interiorImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'interior')}>
-                    <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
-                  </div>
-                ))}
+          <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold mb-4">Auto Details</h1>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
+                <div className="flex space-x-2">
+                  {Auto.interiorImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'interior')}>
+                      <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Front Images</label>
+                <div className="flex space-x-2">
+                  {Auto.frontImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'front')}>
+                      <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Side Images</label>
+                <div className="flex space-x-2">
+                  {Auto.sideImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'side')}>
+                      <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+                <div className="flex space-x-2">
+                  {Auto.backImages.map((image, index) => (
+                    <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                      <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Front Images</label>
-              <div className="flex space-x-2">
-                {Auto.frontImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'front')}>
-                    <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Side Images</label>
-              <div className="flex space-x-2">
-                {Auto.sideImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'side')}>
-                    <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
+
           </div>
-        </div>
+        
 
 
               <div className="grid grid-cols-2 gap-5">
@@ -382,16 +393,32 @@ export default function AutoDetail(props) {
 
         
         </section>
-
-
         {isOpen && (
-        <Lightbox
-          mainSrc={currentImageType === 'interior' ? Auto.interiorImages[photoIndex] : currentImageType === 'front' ? Auto.frontImages[photoIndex] : Auto.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Auto.interiorImages[(photoIndex + 1) % Auto.interiorImages.length] : currentImageType === 'front' ? Auto.frontImages[(photoIndex + 1) % Auto.frontImages.length] : Auto.sideImages[(photoIndex + 1) % Auto.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Auto.interiorImages[(photoIndex + Auto.interiorImages.length - 1) % Auto.interiorImages.length] : currentImageType === 'front' ? Auto.frontImages[(photoIndex + Auto.frontImages.length - 1) % Auto.frontImages.length] : Auto.sideImages[(photoIndex + Ecycle.sideImages.length - 1) % Auto.sideImages.length]}
-          onCloseRequest={closeLightbox}
-          onMovePrevRequest={goToPrevious}
-          onMoveNextRequest={goToNext}
+          <Lightbox
+            mainSrc={
+              currentImageType === 'interior' ? Auto.interiorImages[photoIndex] :
+              currentImageType === 'front' ? Auto.frontImages[photoIndex] :
+              currentImageType === 'side' ? Auto.sideImages[photoIndex] :
+              Auto.backImages[photoIndex]
+            }
+            nextSrc={
+              currentImageType === 'interior' ? Auto.interiorImages[(photoIndex + 1) % Auto.interiorImages.length] :
+              currentImageType === 'front' ? Auto.frontImages[(photoIndex + 1) % Auto.frontImages.length] :
+              currentImageType === 'side' ? Auto.sideImages[(photoIndex + 1) % Auto.sideImages.length] :
+              Auto.backImages[(photoIndex + 1) % Auto.backImages.length]
+            }
+            prevSrc={
+              currentImageType === 'interior' ? Auto.interiorImages[(photoIndex + Auto.interiorImages.length - 1) % Auto.interiorImages.length] :
+              currentImageType === 'front' ? Auto.frontImages[(photoIndex + Auto.frontImages.length - 1) % Auto.frontImages.length] :
+              currentImageType === 'side' ? Auto.sideImages[(photoIndex + Auto.sideImages.length - 1) % Auto.sideImages.length] :
+              Auto.backImages[(photoIndex + Auto.backImages.length - 1) % Auto.backImages.length]
+            }
+            onCloseRequest={closeLightbox}
+            onMovePrevRequest={goToPrevious}
+            onMoveNextRequest={goToNext}
+
+
+
         />
       )}
       </Wrapper>

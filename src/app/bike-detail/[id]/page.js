@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Wrapper from "../../components/wrapper";
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Image from 'next/image'
+import Image from 'next/image';
 
 
 const BikeDetails = [
@@ -57,16 +57,16 @@ const BikeDetails = [
 export default function BikeDetail(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState(Bike.status);
+  const [status, setStatus] = useState("Active");
+  
   const [currentImageType, setCurrentImageType] = useState(null);
   const [evCategory, setEvCategory] = useState('Top EVs'); 
-
 
   const Bike = BikeDetails.find((Bike) => Bike?.id === parseInt(props?.params?.id || 0));
   if (!Bike) {
     return <div>Bike not found</div>;
   }
-
+  
   
 
   const handleImageClick = (index, imageType) => {
@@ -79,6 +79,8 @@ export default function BikeDetail(props) {
     setIsOpen(false);
   };
 
+ 
+ 
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
@@ -90,11 +92,14 @@ export default function BikeDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + Bike.sideImages.length - 1) % Bike.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + Bike.backImages.length - 1) % Bike.backImages.length);
+        break;
       default:
         break;
     }
   };
-
+  
   const goToNext = () => {
     switch (currentImageType) {
       case 'interior':
@@ -106,16 +111,20 @@ export default function BikeDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + 1) % Bike.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Bike.backImages.length);
+        break;
       default:
         break;
     }
   };
+  
+
+  
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
-  };
-
-
+  }
     
   
 
@@ -126,7 +135,7 @@ export default function BikeDetail(props) {
 
   return (
     <Wrapper>     
-      <section className="relative md:pb-24 pb-16 mt-20 px-4">
+<section className="relative md:pb-24 pb-16 mt-20 px-4">
         <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl font-bold mb-4">Bike Details</h1>
           <div className="grid grid-cols-1 gap-4">
@@ -160,6 +169,17 @@ export default function BikeDetail(props) {
                 ))}
               </div>
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+              <div className="flex space-x-2">
+                {Bike.backImages.map((image, index) => (
+                  <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                    <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                  </div>
+                ))}
+              </div>
+</div>
+
           </div>
         </div>
         
@@ -376,13 +396,37 @@ export default function BikeDetail(props) {
 
         {isOpen && (
         <Lightbox
-      
-        mainSrc={currentImageType === 'interior' ? Bike.interiorImages[photoIndex] : currentImageType === 'front' ? Bike.frontImages[photoIndex] : Bike.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Bike.interiorImages[(photoIndex + 1) % Bike.interiorImages.length] : currentImageType === 'front' ? Bike.frontImages[(photoIndex + 1) % Bike.frontImages.length] : Bike.sideImages[(photoIndex + 1) % Bike.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Bike.interiorImages[(photoIndex + Bike.interiorImages.length - 1) % Bike.interiorImages.length] : currentImageType === 'front' ? Bike.frontImages[(photoIndex + Bike.frontImages.length - 1) % Bike.frontImages.length] : Bike.sideImages[(photoIndex + Bike.sideImages.length - 1) % Bike.sideImages.length]}
+          mainSrc={
+            currentImageType === 'interior'
+              ? Bike.interiorImages[photoIndex]
+              : currentImageType === 'front'
+              ? Bike.frontImages[photoIndex]
+              : currentImageType === 'side'
+              ? Bike.sideImages[photoIndex]
+              : Bike.backImages[photoIndex]
+          }
+          nextSrc={
+            currentImageType === 'interior'
+              ? Bike.interiorImages[(photoIndex + 1) % Bike.interiorImages.length]
+              : currentImageType === 'front'
+              ? Bike.frontImages[(photoIndex + 1) % Bike.frontImages.length]
+              : currentImageType === 'side'
+              ? Bike.sideImages[(photoIndex + 1) % Bike.sideImages.length]
+              : Bike.backImages[(photoIndex + 1) % Bike.backImages.length]
+          }
+          prevSrc={
+            currentImageType === 'interior'
+              ? Bike.interiorImages[(photoIndex + Bike.interiorImages.length - 1) % Bike.interiorImages.length]
+              : currentImageType === 'front'
+              ? Bike.frontImages[(photoIndex + Bike.frontImages.length - 1) % Bike.frontImages.length]
+              : currentImageType === 'side'
+              ? Bike.sideImages[(photoIndex + Bike.sideImages.length - 1) % Bike.sideImages.length]
+              : Bike.backImages[(photoIndex + Bike.backImages.length - 1) % Bike.backImages.length]
+          }
           onCloseRequest={closeLightbox}
           onMovePrevRequest={goToPrevious}
           onMoveNextRequest={goToNext}
+
       />
 
 

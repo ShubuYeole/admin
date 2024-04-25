@@ -7,6 +7,7 @@ import Image from "next/link"
 
 
 
+
 // Static data for vehicles
 const DroneDetails = [
   { 
@@ -29,23 +30,17 @@ const DroneDetails = [
     vehicleDescription: "sdsfsd",
     transmissionType: "",
     interiorImages: [
-      "uploads\\interiorImages-1713073931244",
-      "uploads\\interiorImages-1713073931244"
+      "/images/property/BMW.jpeg",
+
     ],
     frontImages: [
-      "uploads\\frontImages-1713073931135",
-      "uploads\\frontImages-1713073931152",
-      "uploads\\frontImages-1713073931154"
+      "/images/property/BMW.jpeg",
     ],
     sideImages: [
-      "uploads\\sideImages-1713073931154",
-      "uploads\\sideImages-1713073931204",
-      "uploads\\sideImages-1713073931230"
+      "/images/property/BMW.jpeg",
     ],
     backImages: [
-      "uploads\\backImages-1713073931241",
-      "uploads\\backImages-1713073931242",
-      "uploads\\backImages-1713073931242"
+      "/images/property/BMW.jpeg",
     ],
     price: {
       currency: "USD",
@@ -88,7 +83,7 @@ export default function DroneDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Drone.interiorImages.length - 1)% Drone.interiorImages.length);
+        setPhotoIndex((photoIndex + Drone.interiorImages.length - 1) % Drone.interiorImages.length);
         break;
       case 'front':
         setPhotoIndex((photoIndex + Drone.frontImages.length - 1) % Drone.frontImages.length);
@@ -96,15 +91,19 @@ export default function DroneDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + Drone.sideImages.length - 1) % Drone.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + Drone.backImages.length - 1) % Drone.backImages.length);
+        break;
       default:
         break;
     }
   };
 
+  // Function to move to the next image
   const goToNext = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + 1) % Drone.interiorImages.length);
+        setPhotoIndex((photoIndex + 1) % Dronerone.interiorImages.length);
         break;
       case 'front':
         setPhotoIndex((photoIndex + 1) % Drone.frontImages.length);
@@ -112,11 +111,13 @@ export default function DroneDetail(props) {
       case 'side':
         setPhotoIndex((photoIndex + 1) % Drone.sideImages.length);
         break;
+      case 'back':
+        setPhotoIndex((photoIndex + 1) % Drone.backImages.length);
+        break;
       default:
         break;
     }
   };
-
 
 
 
@@ -172,6 +173,18 @@ export default function DroneDetail(props) {
                 ))}
               </div>
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">Back Images</label>
+              <div className="flex space-x-2">
+                {Drone.backImages.map((image, index) => (
+                  <div key={index} onClick={() => handleImageClick(index, 'back')}>
+                    <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+
           </div>
         </div>
 
@@ -389,12 +402,28 @@ export default function DroneDetail(props) {
             </section>
             {isOpen && (
         <Lightbox
-          mainSrc={currentImageType === 'interior' ? Tractor.interiorImages[photoIndex] : currentImageType === 'front' ? Drone.frontImages[photoIndex] : Drone.sideImages[photoIndex]}
-          nextSrc={currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + 1) % Drone.interiorImages.length] : currentImageType === 'front' ? Drone.frontImages[(photoIndex + 1) % Drone.frontImages.length] : Tractor.sideImages[(photoIndex + 1) % Drone.sideImages.length]}
-          prevSrc={currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + Drone.interiorImages.length - 1) % Drone.interiorImages.length] : currentImageType === 'front' ? Drone.frontImages[(photoIndex + Tractor.frontImages.length - 1) % Drone.frontImages.length] : Drone.sideImages[(photoIndex + Drone.sideImages.length - 1) % Drone.sideImages.length]}
+          mainSrc={
+            currentImageType === 'interior' ? Drone.interiorImages[photoIndex] :
+            currentImageType === 'front' ? Drone.frontImages[photoIndex] :
+            currentImageType === 'side' ? Dronerone.sideImages[photoIndex] :
+            drone.backImages[photoIndex]
+          }
+          nextSrc={
+            currentImageType === 'interior' ? Drone.interiorImages[(photoIndex + 1) % Drone.interiorImages.length] :
+            currentImageType === 'front' ? Drone.frontImages[(photoIndex + 1) % Drone.frontImages.length] :
+            currentImageType === 'side' ? Drone.sideImages[(photoIndex + 1) % Drone.sideImages.length] :
+            drone.backImages[(photoIndex + 1) % Dronerone.backImages.length]
+          }
+          prevSrc={
+            currentImageType === 'interior' ? Drone.interiorImages[(photoIndex + Drone.interiorImages.length - 1) % Drone.interiorImages.length] :
+            currentImageType === 'front' ? Drone.frontImages[(photoIndex + Drone.frontImages.length - 1) % Drone.frontImages.length] :
+            currentImageType === 'side' ? Drone.sideImages[(photoIndex + Drone.sideImages.length - 1) % Drone.sideImages.length] :
+            drone.backImages[(photoIndex + Drone.backImages.length - 1) % Drone.backImages.length]
+          }
           onCloseRequest={closeLightbox}
           onMovePrevRequest={goToPrevious}
           onMoveNextRequest={goToNext}
+
         />
       )}
       </Wrapper>
