@@ -1,7 +1,7 @@
 'use client'
-import React, { useState } from 'react';
-import Wrapper from "../components/wrapper";
 import Link from "next/link";
+import { useState } from 'react';
+import Wrapper from "../components/wrapper";
 
 const Table = () => {
   const data = [
