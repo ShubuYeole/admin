@@ -1,66 +1,29 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../components/wrapper";
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from 'react';
+import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const data = [
-    {
-      id: 1,
-      ownerName: "tanmay",
-  ownerContact: "9886536272",
-  ownerEmail: "tanmay@gmail.com",
-  ownerCity: "Puen",
-  vehicleType: "ecycle",
-  brand: "honda",
-  model: "hs",
-  variant: "bah",
-  location: "pune",
-  rtoCode: null,
-  batteryPower: "34444",
-  kilometresDriven: null,
-  bodyType: null,
-  color: "red",
-  registrationYear: "2024",
-  vehicleDescription: "hgshswjsk",
-  transmissionType: null,
-  interiorImages: [
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943166"
-  ],
-  frontImages: [
-    "uploads\\frontImages-1712900943154",
-    "uploads\\frontImages-1712900943157"
-  ],
-  sideImages: [
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943159"
-  ],
-  backImages: [
-    "uploads\\backImages-1712900943159",
-    "uploads\\backImages-1712900943160",
-    "uploads\\backImages-1712900943165"
-  ],
-  price: {
-    "currency": "USD",
-    "value": 45555555
-  },
-},
-  ];
-
-
+  const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState('Approved'); // Initialize status state
-  
-  
-  
+  const [status, setStatus] = useState('Approved');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://51.79.225.217:5001/api/vehicles/ebike');
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleDelete = (id) => {
-    // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
   };
 
@@ -77,7 +40,7 @@ const Table = () => {
   };
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value); // Update status state
+    setStatus(e.target.value);
   };
 
   const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
@@ -85,31 +48,8 @@ const Table = () => {
   return (
     <Wrapper>
       <div className="container mx-auto mt-32">
-        <div className="flex justify-between mb-6">
-          <div>
-            <select value={entriesPerPage} onChange={handleEntriesPerPageChange} className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3">
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-            &nbsp;entries per page
-          </div>
-          <div className="flex items-center">
-            <div className="mr-2">
-              <input
-                type="text"
-                className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
-                placeholder="Search..."
-              />
-              <button className="px-3 py-1"> {/* Icon for search button (optional) */}</button>
-            </div>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
-              Add New
-            </button>
-            <button onClick={() => handlePageChange('prev')} disabled={currentPage === 1} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2">Prev</button>
-            <button onClick={() => handlePageChange('next')} disabled={currentPage * entriesPerPage >= data.length} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded">Next</button>
-          </div>
-        </div>
+        {/* Entry per page selector */}
+        {/* Pagination controls */}
       </div>
 
       <div className="container mx-auto mt-4">
@@ -118,22 +58,20 @@ const Table = () => {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="px-3 py-2 text-left text-sm font-medium">ID</th>
-                <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
+                <th className="px-3 py-2 text-left text-sm font-medium">Owner Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Variant</th>
-                {/* <th className="px-4 py-2 text-left text-sm font-medium">T</th> */}
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  <td className="px-3 py-2 text-left text-sm">{item.id}</td>
-                  <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
+                <tr key={item._id} className="hover:bg-gray-100 border-b border-gray-200">
+                  <td className="px-3 py-2 text-left text-sm">{item._id}</td>
+                  <td className="px-3 py-2 text-left text-sm">{item.ownerName}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.variant}</td>
-                  {/* <td className="px-4 py-2 text-left text-sm">{item.type}</td> */}
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -150,20 +88,13 @@ const Table = () => {
                     </div>
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
-                  <Link 
-              href={`/bike-detail/${item.id}`} 
-              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded" 
-              onClick={() => handleView(item.id)}
-               >
-              <span className="mdi mdi-eye"></span> 
-              </Link>
-
-  
-                  
-  
-                
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
-                      <span className="mdi mdi-delete"></span>
+                    <Link href={`/bike-detail/${item._id}`}>
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+                        View
+                      </button>
+                    </Link>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item._id)}>
+                      Delete
                     </button>
                   </td>
                 </tr>
