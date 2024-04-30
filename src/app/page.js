@@ -17,25 +17,25 @@ export default function Home() {
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    if (status === "loading") {
-        return <p>Loading...</p>
-    }
+     if (status === "loading") {
+         return <p>Loading...</p>
+     }
 
-    if (status === "unauthenticated") {
-        // Show toastify message indicating the user needs to login
-        toast.error('You need to login first', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+     if (status === "unauthenticated") {
+         // Show toastify message indicating the user needs to login
+         toast.error('You need to login first', {
+             position: "top-right",
+           autoClose: 5000,
+         hideProgressBar: false,
+             closeOnClick: true,
+             pauseOnHover: true,
+             draggable: true,
+             progress: undefined,
+         });
 
         // Redirect to the login page
-        router.push('/login');
-        return null;
+         router.push('/login');
+         return null;
     }
     return (
         <Wrapper>
@@ -43,7 +43,7 @@ export default function Home() {
                 <div className="layout-specing">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h5 className="text-xl font-semibold">Hello, Rutuja</h5>
+                            <h5 className="text-xl font-semibold">Hello</h5>
                             <h6 className="text-slate-400">Welcome back!</h6>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ export default function Home() {
                                             </div>
                                         )
                                     })}
-                                </div>
+                                </div>``
                             </div>
                         </div>
                     </div>
@@ -185,7 +185,7 @@ export default function Home() {
                         <div className="xl:col-span-3 lg:col-span-6 xl:order-3 order-2">
                             <div className="relative overflow-hidden rounded-md shadow dark:shadow-gray-700 bg-white dark:bg-slate-900">
                                 <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-                                    <h6 className="text-lg font-semibold">Top Properties</h6>
+                                    <h6 className="text-lg font-semibold">Top EVs</h6>
 
                                     <Link href="" className="btn btn-link font-normal text-slate-400 hover:text-green-600 after:bg-green-600 transition duration-500">See More <i className="mdi mdi-arrow-right ms-1"></i></Link>
                                 </div>

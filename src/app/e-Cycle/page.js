@@ -59,22 +59,23 @@ const Table = () => {
     alert(`Item with ID ${id} deleted`);
   };
 
+
+
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
+    setCurrentPage(1); // Reset current page when changing entries per page
   };
 
-  const handlePageChange = (action) => {
-    if (action === 'prev') {
-      setCurrentPage(currentPage => Math.max(1, currentPage - 1));
-    } else if (action === 'next') {
-      setCurrentPage(currentPage => Math.min(Math.ceil(data.length / entriesPerPage), currentPage + 1));
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value); // Update status state
+    setStatus(e.target.value);
   };
 
+  const totalPages = Math.ceil(data.length / entriesPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   return (
@@ -101,8 +102,7 @@ const Table = () => {
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-            <button onClick={() => handlePageChange('prev')} disabled={currentPage === 1} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2">Prev</button>
-            <button onClick={() => handlePageChange('next')} disabled={currentPage * entriesPerPage >= data.length} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded">Next</button>
+
           </div>
         </div>
       </div>
@@ -144,10 +144,10 @@ const Table = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-2 text-left text-sm">
+                  <td className="px-2 py-2 text-left text-sm">
                     <Link 
               href={`/ecycle-detail/${item.id}`} 
-              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded" 
+              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-2 mr-1 rounded" 
               onClick={() => handleView(item.id)}
                >
               <span className="mdi mdi-eye"></span> 
@@ -163,6 +163,44 @@ const Table = () => {
           </table>
         </div>
       </div>
+
+      <div className="container mx-auto mt-4 flex justify-end">
+        <div className="flex justify-end">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2"
+          >
+            Prev
+          </button>
+          {pageNumbers.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`${
+                pageNumber === currentPage
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+              } font-bold py-1 px-2 rounded mx-1`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded ml-2"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+
+
+
+
+
     </Wrapper>
   );
 };

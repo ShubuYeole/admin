@@ -35,8 +35,8 @@ export default function Sidebar(){
                             <Link href="/explore-Evs"><i className="mdi mdi-car-connected me-2"></i>Explore EVs</Link>
                         </li>
 
-                        <li className={`${manu === "/add-property" ? 'active' : ''} ms-0`}>
-                            <Link href="/add-property"><i className="mdi mdi-car-hatchback me-2"></i>Add EV data</Link>
+                        <li className={`${manu === "/add-EVs" ? 'active' : ''} ms-0`}>
+                            <Link href="/add-EVs"><i className="mdi mdi-car-hatchback me-2"></i>Add EV</Link>
                         </li>
 
                         <li className={`${manu === "/manage-users" ? 'active' : ''} ms-0`}>
@@ -76,19 +76,22 @@ export default function Sidebar(){
                             <Link href="/transactions"><i className="mdi mdi-taxi me-2"></i>Manage Transactions</Link>   
                         </li>
 
-                        <li className={`${manu === "/chat" ? 'active' : ''} ms-0`}>
+                        {/* <li className={`${manu === "/chat" ? 'active' : ''} ms-0`}>
                             <Link href="/chat"><i className="mdi mdi-chat-outline me-2"></i>Chat</Link>
+                        </li> */}
+                                                <li className={`${manu === "/profile" ? 'active' : ''} ms-0`}>
+                            <Link href="/profile"><i className="mdi mdi-account-edit me-2"></i>Profile</Link>   
                         </li>
 
-                        <li className={`sidebar-dropdown ms-0 ${["/profile", "/profile-setting", '/user-item'].includes(manu) ? 'active' : ''}`}>
-                            <Link href="#" onClick={()=>{setSubManu(submanu === '/user-item' ? '' : '/user-item')}}><i className="mdi mdi-account-edit me-2"></i>User Profile</Link>
-                            <div className={`sidebar-submenu ${[ "/profile", '/user-item'].includes(submanu) ? 'block' : ''}`}>
-                                <ul>
+                        {/* <li className={`sidebar-dropdown ms-0 ${["/profile", "/profile-setting", '/user-item'].includes(manu) ? 'active' : ''}`}> */}
+                            {/* <Link href="#" onClick={()=>{setSubManu(submanu === '/user-item' ? '' : '/user-item')}}><i className="mdi mdi-account-edit me-2"></i>User Profile</Link> */}
+                            {/* <div className={`sidebar-submenu ${[ "/profile", '/user-item'].includes(submanu) ? 'block' : ''}`}> */}
+                                {/* <ul> */}
                                     {/* <li className={`${manu === "/profile" ? 'active' : ''} ms-0`}><Link href="/profile">Profile</Link></li> */}
-                                    <li className={`${manu === "/profile" ? 'active' : ''} ms-0`}><Link href="/profile">Profile</Link></li>
-                                </ul>
-                            </div>  
-                        </li>
+                                    {/* <li className={`${manu === "/profile" ? 'active' : ''} ms-0`}><Link href="/profile">Profile</Link></li> */}
+                                {/* </ul> */}
+                            {/* </div>   */}
+                        {/* </li> */}
 
                         {/* <li className={`sidebar-dropdown ms-0 ${["/blog", "/blog-detail"].includes(manu) ? 'active' : ''}`}>
                             <Link href="#" onClick={() =>{setSubManu(submanu === '/blog-item' ? '' : '/blog-item')}}><i className="mdi mdi-post-outline me-2"></i>Blog</Link>
@@ -100,7 +103,7 @@ export default function Sidebar(){
                             </div>
                         </li> */}
 
-                        <li className={`sidebar-dropdown ms-0 ${["/starter", "/faqs", "/pricing", "/review","/privacy", "/terms"].includes(manu) ? 'active' : ''}`}>
+                        {/* <li className={`sidebar-dropdown ms-0 ${["/starter", "/faqs", "/pricing", "/review","/privacy", "/terms"].includes(manu) ? 'active' : ''}`}>
                             <Link href="#" onClick={() =>setSubManu(submanu === "/page-item" ? "" : "/page-item")}><i className="mdi mdi-file-document-outline me-2"></i>Pages</Link>
                             <div className={`sidebar-submenu ${["/starter", "/faqs", "/pricing", "/review","/privacy", "/terms", "/page-item"].includes(submanu) ? 'block' : ''}`}>
                                 <ul>
@@ -112,9 +115,9 @@ export default function Sidebar(){
                                     <li className={`${manu === "/terms" ? 'active' : ''} ms-0`}><Link href="/terms">Term & Condition</Link></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> */}
 
-                        <li className={`sidebar-dropdown ms-0 ${["/login", "/signup", "/signup-success", "/reset-password", "/lock-screen"].includes(manu) ? 'active' : ''}`}>
+                        {/* <li className={`sidebar-dropdown ms-0 ${["/login", "/signup", "/signup-success", "/reset-password", "/lock-screen"].includes(manu) ? 'active' : ''}`}>
                             <Link href="#" onClick={()=>{setSubManu(submanu === "/auth-item" ? '' : "/auth-item")}}><i className="mdi mdi-login me-2"></i>Authentication</Link>
                             <div className={`sidebar-submenu ${["/login", "/signup", "/signup-success", "/reset-password", "/lock-screen", "/auth-item"].includes(submanu) ? 'block' : ''}`}>
                                 <ul>
@@ -125,9 +128,9 @@ export default function Sidebar(){
                                     <li className={`${manu === "/lock-screen" ? 'active' : ''} ms-0`}><Link href="/lock-screen">Lockscreen</Link></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> */}
 
-                        <li className={`sidebar-dropdown ms-0 ${["/comingsoon", "/maintenance", "/error", "/thankyou"].includes(manu) ? 'active' : ''}`}>
+                        {/* <li className={`sidebar-dropdown ms-0 ${["/comingsoon", "/maintenance", "/error", "/thankyou"].includes(manu) ? 'active' : ''}`}>
                             <Link href="#" onClick={()=>{setSubManu(submanu === "/misce-item" ? '' : '/misce-item')}}><i className="mdi mdi-layers me-2"></i>Miscellaneous</Link>
                             <div className={`sidebar-submenu ${["/comingsoon", "/maintenance", "/error", "/thankyou", '/misce-item'].includes(submanu) ? 'block' : ''}`}>
                                 <ul>
@@ -137,7 +140,7 @@ export default function Sidebar(){
                                     <li className={`${manu === "/thankyou" ? 'active' : ''} ms-0`}><Link href="/thankyou">Thank You</Link></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> */}
 
                     </ul>
                 </SimpleBar>

@@ -1,73 +1,40 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+"use client";
+ import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Image from 'next/image'
+import Wrapper from "../../components/wrapper";
 
-
-// Static data for vehicles
-const CarDetails = [
-  { 
-    id: 1,
-    ownerName: "TANMAY",
-    ownerContact: "9876543212",
-    ownerEmail: "tanmay@gmail.com",
-    ownerCity: "Pune",
-    vehicleType: "ecar",
-    brand: "NISSAN",
-    model: "NS",
-    variant: "BV",
-    location: "PUNE",
-    rtoCode: "MH14RE",
-    batteryPower: 7890,
-    kilometresDriven: 565433,
-    color: "BLUE",
-    bodyType: "MUV",
-    registrationYear: 2021,
-    vehicleDescription: "BESTTTT",
-    transmissionType: "Manual",
-    interiorImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    frontImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-
-    ],
-    sideImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    backImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-  },
-  // Add more vehicles as needed
-];
-
-export default function CarDetailsDetail(props) {
+const CarDetail = ({ params }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active"); // Initialize with a default value
   const [currentImageType, setCurrentImageType] = useState(null);
+  const [status, setStatus] = useState('Active'); // Set default status
   const [evCategory, setEvCategory] = useState('Top EVs'); 
+  // Sample fetched data, replace this with actual fetching logic
+  const [CarData, setCarData] = useState(null);
 
+  useEffect(() => {
+    
+    const fetchCarData = async () => {
+      try {
+        const response = await fetch(`http://51.79.225.217:5001/api/vehicles/${params.id}`);
+        const jsonData = await response.json();
+        setCarData(jsonData);
+      } catch (error) {
+        console.error('Error fetching car details:', error);
+      }
+    };
 
-  // Find the vehicle based on the provided ID
-  const Car = CarDetails.find((Car) => Car?.id === parseInt(props?.params?.id || 0));
+    fetchCarData();
+  }, [params.id]);
 
-  // If vehicle is not found, display a message
-  if (!Car) {
-    return <div>Car not found</div>;
+  if (!CarData) {
+    return <div>Loading...</div>;
   }
-  
+
+
+
   
 
   const handleImageClick = (index, imageType) => {
@@ -83,16 +50,16 @@ export default function CarDetailsDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Car.interiorImages.length - 1) % Car.interiorImages.length);
+        setPhotoIndex((photoIndex + CarData.interiorImages.length - 1) % Car.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + Car.frontImages.length - 1) % Car.frontImages.length);
+        setPhotoIndex((photoIndex + CarData.frontImages.length - 1) % Car.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + Car.sideImages.length - 1) % Car.sideImages.length);
+        setPhotoIndex((photoIndex + CarData.sideImages.length - 1) % Car.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + Car.backImages.length - 1) % Car.backImages.length);
+        setPhotoIndex((photoIndex + CarData.backImages.length - 1) % Car.backImages.length);
         break;
       default:
         break;
@@ -102,16 +69,16 @@ export default function CarDetailsDetail(props) {
   const goToNext = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + 1) % Car.interiorImages.length);
+        setPhotoIndex((photoIndex + 1) % CarData.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + 1) % Car.frontImages.length);
+        setPhotoIndex((photoIndex + 1) % CarData.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + 1) % Car.sideImages.length);
+        setPhotoIndex((photoIndex + 1) % CarData.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + 1) % Car.backImages.length);
+        setPhotoIndex((photoIndex + 1) % CarData.backImages.length);
         break;
       default:
         break;
@@ -146,7 +113,7 @@ const handleEvCategoryChange = (event) => {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
                 <div className="flex space-x-2">
-                  {Car.interiorImages.map((image, index) => (
+                  {CarData.interiorImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'interior')}>
                       <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
                     </div>
@@ -156,7 +123,7 @@ const handleEvCategoryChange = (event) => {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Front Images</label>
                 <div className="flex space-x-2">
-                  {Car.frontImages.map((image, index) => (
+                  {CarData.frontImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'front')}>
                       <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                     </div>
@@ -166,7 +133,7 @@ const handleEvCategoryChange = (event) => {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Side Images</label>
                 <div className="flex space-x-2">
-                  {Car.sideImages.map((image, index) => (
+                  {CarData.sideImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'side')}>
                       <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
                     </div>
@@ -176,7 +143,7 @@ const handleEvCategoryChange = (event) => {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Back Images</label>
                 <div className="flex space-x-2">
-                  {Car.backImages.map((image, index) => (
+                  {CarData.backImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'back')}>
                       <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
                     </div>
@@ -196,7 +163,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Brand</label>
     <input
       type="text"
-      value={Car.brand}
+      value={CarData.brand}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -205,7 +172,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Model</label>
     <input
       type="text"
-      value={Car.model}
+      value={CarData.model}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -214,7 +181,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Vehicle Type</label>
     <input
       type="text"
-      value={Car.Type}
+      value={CarData.Type}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -223,7 +190,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Variant</label>
     <input
       type="text"
-      value={Car.variant}
+      value={CarData.variant}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -232,7 +199,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Location</label>
     <input
       type="text"
-      value={Car.location}
+      value={CarData.location}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -241,7 +208,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">RTO code</label>
     <input
       type="text"
-      value={Car.rtoCode}
+      value={CarData.rtoCode}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -250,7 +217,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Battery Power</label>
     <input
       type="text"
-      value={Car.batteryPower}
+      value={CarData.batteryPower}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -259,7 +226,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">kilometers Driven</label>
     <input
       type="text"
-      value={Car.kilometresDriven}
+      value={CarData.kilometresDriven}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -268,7 +235,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Color</label>
     <input
       type="text"
-      value={Car.color}
+      value={CarData.color}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -277,7 +244,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">BodyType</label>
     <input
       type="text"
-      value={Car.bodyType}
+      value={CarData.bodyType}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -286,7 +253,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Registration Year</label>
     <input
       type="text"
-      value={Car.registrationYear}
+      value={CarData.registrationYear}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -295,7 +262,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Transmission Type</label>
     <input
       type="text"
-      value={Car.transmissionType}
+      value={CarData.transmissionType}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -304,7 +271,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Owner Name</label>
     <input
       type="text"
-      value={Car.ownerName}
+      value={CarData.ownerName}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -313,7 +280,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Owner Contact</label>
     <input
       type="text"
-      value={Car.ownerContact}
+      value={CarData.ownerContact}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -322,7 +289,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Owner Email</label>
     <input
       type="text"
-      value={Car.ownerEmail}
+      value={CarData.ownerEmail}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -331,7 +298,7 @@ const handleEvCategoryChange = (event) => {
     <label className="block text-gray-700 font-bold mb-2">Owner City</label>
     <input
       type="text"
-      value={Car.ownerCity}
+      value={CarData.ownerCity}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -361,7 +328,7 @@ const handleEvCategoryChange = (event) => {
                 <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Vehicle Description</label>
                 <textarea
-                  value={Car.vehicleDescription}
+                  value={CarData.vehicleDescription}
                   className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                   readOnly
                   rows="4"
@@ -393,22 +360,22 @@ const handleEvCategoryChange = (event) => {
         {isOpen && (
           <Lightbox
             mainSrc={
-              currentImageType === 'interior' ? Car.interiorImages[photoIndex] :
-              currentImageType === 'front' ? Car.frontImages[photoIndex] :
-              currentImageType === 'side' ? Car.sideImages[photoIndex] :
+              currentImageType === 'interior' ? CarData.interiorImages[photoIndex] :
+              currentImageType === 'front' ? CarData.frontImages[photoIndex] :
+              currentImageType === 'side' ? CarData.sideImages[photoIndex] :
               Car.backImages[photoIndex]
             }
             nextSrc={
-              currentImageType === 'interior' ? Car.interiorImages[(photoIndex + 1) % Car.interiorImages.length] :
-              currentImageType === 'front' ? Car.frontImages[(photoIndex + 1) % Car.frontImages.length] :
-              currentImageType === 'side' ? Car.sideImages[(photoIndex + 1) % Car.sideImages.length] :
-              Car.backImages[(photoIndex + 1) % Car.backImages.length]
+              currentImageType === 'interior' ? CarData.interiorImages[(photoIndex + 1) % CarData.interiorImages.length] :
+              currentImageType === 'front' ? CarData.frontImages[(photoIndex + 1) % CarData.frontImages.length] :
+              currentImageType === 'side' ? CarData.sideImages[(photoIndex + 1) % CarData.sideImages.length] :
+              Car.backImages[(photoIndex + 1) % CarData.backImages.length]
             }
             prevSrc={
-              currentImageType === 'interior' ? Car.interiorImages[(photoIndex + Car.interiorImages.length - 1) % Car.interiorImages.length] :
-              currentImageType === 'front' ? Car.frontImages[(photoIndex + Car.frontImages.length - 1) % Car.frontImages.length] :
-              currentImageType === 'side' ? Car.sideImages[(photoIndex + Car.sideImages.length - 1) % Car.sideImages.length] :
-              Car.backImages[(photoIndex + Car.backImages.length - 1) % Car.backImages.length]
+              currentImageType === 'interior' ? CarData.interiorImages[(photoIndex + CarData.interiorImages.length - 1) % Car.interiorImages.length] :
+              currentImageType === 'front' ? CarData.frontImages[(photoIndex + CarData.frontImages.length - 1) % Car.frontImages.length] :
+              currentImageType === 'side' ? CarData.sideImages[(photoIndex + CarData.sideImages.length - 1) % Car.sideImages.length] :
+              Car.backImages[(photoIndex + CarData.backImages.length - 1) % CarData.backImages.length]
             }
             onCloseRequest={closeLightbox}
             onMovePrevRequest={goToPrevious}
@@ -420,4 +387,4 @@ const handleEvCategoryChange = (event) => {
     </>
   );
 }
-// 
+export default CarDetail

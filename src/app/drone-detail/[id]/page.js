@@ -1,73 +1,39 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+"use client";
+ import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Image from "next/link"
+import Wrapper from "../../components/wrapper";
 
 
 
-
-// Static data for vehicles
-const DroneDetails = [
-  { 
-    id: 1,
-    ownerName: "Tanmay Pawa",
-    ownerContact: "0724962619",
-    ownerEmail: "tanmayrp97@gmail.com",
-    ownerCity: "Pune",
-    vehicleType: "edrone",
-    brand: "ION",
-    model: "LE",
-    variant: "ER",
-    location: "Pune",
-    rtoCode: null,
-    batteryPower: "34555",
-    kilometresDriven: null,
-    bodyType: "",
-    color: "red",
-    registrationYear: "2024",
-    vehicleDescription: "sdsfsd",
-    transmissionType: "",
-    interiorImages: [
-      "/images/property/BMW.jpeg",
-
-    ],
-    frontImages: [
-      "/images/property/BMW.jpeg",
-    ],
-    sideImages: [
-      "/images/property/BMW.jpeg",
-    ],
-    backImages: [
-      "/images/property/BMW.jpeg",
-    ],
-    price: {
-      currency: "USD",
-      value: 2344556
-    },
-
-  },
-  // Add more vehicles as needed
-];
-
-export default function DroneDetail(props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active"); // Initialize with a default value
-  const [currentImageType, setCurrentImageType] = useState(null);
-  const [evCategory, setEvCategory] = useState('Top EVs'); 
-
-
-  // Find the vehicle based on the provided ID
-  const Drone = DroneDetails.find((Drone) => Drone?.id === parseInt(props?.params?.id || 0));
-
-  // If vehicle is not found, display a message
-  if (!Drone) {
-    return <div>Drone not found</div>;
-  }
-
-
+const DroneDetail = ({ params }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [photoIndex, setPhotoIndex] = useState(0);
+    const [currentImageType, setCurrentImageType] = useState(null);
+    const [status, setStatus] = useState('Active'); // Set default status
+    const [evCategory, setEvCategory] = useState('Top EVs'); 
+    // Sample fetched data, replace this with actual fetching logic
+    const [droneData, setDroneData] = useState(null);
+  
+    useEffect(() => {
+    
+      const fetchDroneData = async () => {
+        try {
+          const response = await fetch(`http://51.79.225.217:5001/api/vehicles/${params.id}`);
+          const jsonData = await response.json();
+          setDroneData(jsonData);
+        } catch (error) {
+          console.error('Error fetching car details:', error);
+        }
+      };
+  
+      fetchDroneData();
+    }, [params.id]);
+  
+    if (!droneData) {
+      return <div>Loading...</div>;
+    }
   
 
   const handleImageClick = (index, imageType) => {
@@ -83,16 +49,16 @@ export default function DroneDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Drone.interiorImages.length - 1) % Drone.interiorImages.length);
+        setPhotoIndex((photoIndex + DroneData.interiorImages.length - 1) % droneData.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + Drone.frontImages.length - 1) % Drone.frontImages.length);
+        setPhotoIndex((photoIndex + DroneData.frontImages.length - 1) % droneData.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + Drone.sideImages.length - 1) % Drone.sideImages.length);
+        setPhotoIndex((photoIndex + DroneData.sideImages.length - 1) % droneData.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + Drone.backImages.length - 1) % Drone.backImages.length);
+        setPhotoIndex((photoIndex + DroneData.backImages.length - 1) % droneData.backImages.length);
         break;
       default:
         break;
@@ -103,16 +69,16 @@ export default function DroneDetail(props) {
   const goToNext = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + 1) % Dronerone.interiorImages.length);
+        setPhotoIndex((photoIndex + 1) % droneData.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + 1) % Drone.frontImages.length);
+        setPhotoIndex((photoIndex + 1) % droneData.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + 1) % Drone.sideImages.length);
+        setPhotoIndex((photoIndex + 1) % droneData.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + 1) % Drone.backImages.length);
+        setPhotoIndex((photoIndex + 1) % droneData.backImages.length);
         break;
       default:
         break;
@@ -146,7 +112,7 @@ export default function DroneDetail(props) {
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
               <div className="flex space-x-2">
-                {Drone.interiorImages.map((image, index) => (
+                {droneData.interiorImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'interior')}>
                     <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
                   </div>
@@ -156,7 +122,7 @@ export default function DroneDetail(props) {
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">Front Images</label>
               <div className="flex space-x-2">
-                {Drone.frontImages.map((image, index) => (
+                {droneData.frontImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'front')}>
                     <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                   </div>
@@ -166,7 +132,7 @@ export default function DroneDetail(props) {
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">Side Images</label>
               <div className="flex space-x-2">
-                {Drone.sideImages.map((image, index) => (
+                {droneData.sideImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'side')}>
                     <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
                   </div>
@@ -176,7 +142,7 @@ export default function DroneDetail(props) {
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">Back Images</label>
               <div className="flex space-x-2">
-                {Drone.backImages.map((image, index) => (
+                {droneData.backImages.map((image, index) => (
                   <div key={index} onClick={() => handleImageClick(index, 'back')}>
                     <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
                   </div>
@@ -194,7 +160,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Brand</label>
     <input
       type="text"
-      value={Drone.brand}
+      value={droneData.brand}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -203,7 +169,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Model</label>
     <input
       type="text"
-      value={Drone.model}
+      value={droneData.model}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -221,7 +187,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Variant</label>
     <input
       type="text"
-      value={Drone.variant}
+      value={droneData.variant}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -230,7 +196,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Location</label>
     <input
       type="text"
-      value={Drone.location}
+      value={droneData.location}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -248,7 +214,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Battery Power</label>
     <input
       type="text"
-      value={Drone.batteryPower}
+      value={droneData.batteryPower}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -266,7 +232,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Color</label>
     <input
       type="text"
-      value={Drone.color}
+      value={droneData.color}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -284,7 +250,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Registration Year</label>
     <input
       type="text"
-      value={Drone.registrationYear}
+      value={droneData.registrationYear}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -302,7 +268,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Name</label>
     <input
       type="text"
-      value={Drone.ownerName}
+      value={droneData.ownerName}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -311,7 +277,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Contact</label>
     <input
       type="text"
-      value={Drone.ownerContact}
+      value={droneData.ownerContact}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -320,7 +286,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Email</label>
     <input
       type="text"
-      value={Drone.ownerEmail}
+      value={droneData.ownerEmail}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -331,7 +297,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner City</label>
     <input
       type="text"
-      value={Drone.ownerCity}
+      value={droneData.ownerCity}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -363,7 +329,7 @@ export default function DroneDetail(props) {
                 <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Vehicle Description</label>
                 <textarea
-                  value={Drone.vehicleDescription}
+                  value={droneData.vehicleDescription}
                   className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                   readOnly
                   rows="4"
@@ -375,7 +341,7 @@ export default function DroneDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Price</label>
     <input
       type="text"
-      value={Drone.price}
+      value={droneData.price}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -403,22 +369,22 @@ export default function DroneDetail(props) {
             {isOpen && (
         <Lightbox
           mainSrc={
-            currentImageType === 'interior' ? Drone.interiorImages[photoIndex] :
-            currentImageType === 'front' ? Drone.frontImages[photoIndex] :
-            currentImageType === 'side' ? Dronerone.sideImages[photoIndex] :
-            drone.backImages[photoIndex]
+            currentImageType === 'interior' ? droneData.interiorImages[photoIndex] :
+            currentImageType === 'front' ? droneData.frontImages[photoIndex] :
+            currentImageType === 'side' ? droneData.sideImages[photoIndex] :
+            droneData.backImages[photoIndex]
           }
           nextSrc={
-            currentImageType === 'interior' ? Drone.interiorImages[(photoIndex + 1) % Drone.interiorImages.length] :
-            currentImageType === 'front' ? Drone.frontImages[(photoIndex + 1) % Drone.frontImages.length] :
-            currentImageType === 'side' ? Drone.sideImages[(photoIndex + 1) % Drone.sideImages.length] :
-            drone.backImages[(photoIndex + 1) % Dronerone.backImages.length]
+            currentImageType === 'interior' ? droneData.interiorImages[(photoIndex + 1) % droneData.interiorImages.length] :
+            currentImageType === 'front' ? droneData.frontImages[(photoIndex + 1) % droneData.frontImages.length] :
+            currentImageType === 'side' ? droneData.sideImages[(photoIndex + 1) % droneData.sideImages.length] :
+            droneData.backImages[(photoIndex + 1) % droneData.backImages.length]
           }
           prevSrc={
-            currentImageType === 'interior' ? Drone.interiorImages[(photoIndex + Drone.interiorImages.length - 1) % Drone.interiorImages.length] :
-            currentImageType === 'front' ? Drone.frontImages[(photoIndex + Drone.frontImages.length - 1) % Drone.frontImages.length] :
-            currentImageType === 'side' ? Drone.sideImages[(photoIndex + Drone.sideImages.length - 1) % Drone.sideImages.length] :
-            drone.backImages[(photoIndex + Drone.backImages.length - 1) % Drone.backImages.length]
+            currentImageType === 'interior' ? droneData.interiorImages[(photoIndex + droneData.interiorImages.length - 1) % droneData.interiorImages.length] :
+            currentImageType === 'front' ? droneData.frontImages[(photoIndex + droneData.frontImages.length - 1) % droneData.frontImages.length] :
+            currentImageType === 'side' ? droneData.sideImages[(photoIndex + droneData.sideImages.length - 1) % droneData.sideImages.length] :
+            droneData.backImages[(photoIndex + droneData.backImages.length - 1) % droneData.backImages.length]
           }
           onCloseRequest={closeLightbox}
           onMovePrevRequest={goToPrevious}
@@ -430,3 +396,5 @@ export default function DroneDetail(props) {
     </>
   );
 }
+export default DroneDetail
+

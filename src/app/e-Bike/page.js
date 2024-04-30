@@ -48,6 +48,140 @@ const Table = () => {
     "value": 45555555
   },
 },
+
+{
+  id: 2,
+  ownerName: "tanmay",
+ownerContact: "9886536272",
+ownerEmail: "tanmay@gmail.com",
+ownerCity: "Puen",
+vehicleType: "ecycle",
+brand: "honda",
+model: "hs",
+variant: "bah",
+location: "pune",
+rtoCode: null,
+batteryPower: "34444",
+kilometresDriven: null,
+bodyType: null,
+color: "red",
+registrationYear: "2024",
+vehicleDescription: "hgshswjsk",
+transmissionType: null,
+interiorImages: [
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943166"
+],
+frontImages: [
+"uploads\\frontImages-1712900943154",
+"uploads\\frontImages-1712900943157"
+],
+sideImages: [
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943159"
+],
+backImages: [
+"uploads\\backImages-1712900943159",
+"uploads\\backImages-1712900943160",
+"uploads\\backImages-1712900943165"
+],
+price: {
+"currency": "USD",
+"value": 45555555
+},
+
+
+},
+
+
+{
+  id: 3,
+  ownerName: "tanmay",
+ownerContact: "9886536272",
+ownerEmail: "tanmay@gmail.com",
+ownerCity: "Puen",
+vehicleType: "ecycle",
+brand: "honda",
+model: "hs",
+variant: "bah",
+location: "pune",
+rtoCode: null,
+batteryPower: "34444",
+kilometresDriven: null,
+bodyType: null,
+color: "red",
+registrationYear: "2024",
+vehicleDescription: "hgshswjsk",
+transmissionType: null,
+interiorImages: [
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943166"
+],
+frontImages: [
+"uploads\\frontImages-1712900943154",
+"uploads\\frontImages-1712900943157"
+],
+sideImages: [
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943159"
+],
+backImages: [
+"uploads\\backImages-1712900943159",
+"uploads\\backImages-1712900943160",
+"uploads\\backImages-1712900943165"
+],
+price: {
+"currency": "USD",
+"value": 45555555
+},
+},
+{
+  id: 4,
+  ownerName: "tanmay",
+ownerContact: "9886536272",
+ownerEmail: "tanmay@gmail.com",
+ownerCity: "Puen",
+vehicleType: "ecycle",
+brand: "honda",
+model: "hs",
+variant: "bah",
+location: "pune",
+rtoCode: null,
+batteryPower: "34444",
+kilometresDriven: null,
+bodyType: null,
+color: "red",
+registrationYear: "2024",
+vehicleDescription: "hgshswjsk",
+transmissionType: null,
+interiorImages: [
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943165",
+"uploads\\interiorImages-1712900943166"
+],
+frontImages: [
+"uploads\\frontImages-1712900943154",
+"uploads\\frontImages-1712900943157"
+],
+sideImages: [
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943158",
+"uploads\\sideImages-1712900943159"
+],
+backImages: [
+"uploads\\backImages-1712900943159",
+"uploads\\backImages-1712900943160",
+"uploads\\backImages-1712900943165"
+],
+price: {
+"currency": "USD",
+"value": 45555555
+},
+},
   ];
 
 
@@ -66,29 +200,35 @@ const Table = () => {
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
+    setCurrentPage(1); // Reset current page when changing entries per page
   };
 
-  const handlePageChange = (action) => {
-    if (action === 'prev') {
-      setCurrentPage(currentPage => Math.max(1, currentPage - 1));
-    } else if (action === 'next') {
-      setCurrentPage(currentPage => Math.min(Math.ceil(data.length / entriesPerPage), currentPage + 1));
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value); // Update status state
+    setStatus(e.target.value);
   };
 
+  const totalPages = Math.ceil(data.length / entriesPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
+
+  
 
   return (
     <Wrapper>
-      <div className="container mx-auto mt-32">
+          <div className="container mx-auto mt-32">
         <div className="flex justify-between mb-6">
           <div>
-            <select value={entriesPerPage} onChange={handleEntriesPerPageChange} className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3">
-              <option value="10">10</option>
+            <select
+              value={entriesPerPage}
+              onChange={handleEntriesPerPageChange}
+              className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
+            >
+              <option value="3">3</option>
               <option value="20">20</option>
               <option value="30">30</option>
             </select>
@@ -106,11 +246,10 @@ const Table = () => {
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-            <button onClick={() => handlePageChange('prev')} disabled={currentPage === 1} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2">Prev</button>
-            <button onClick={() => handlePageChange('next')} disabled={currentPage * entriesPerPage >= data.length} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded">Next</button>
-          </div>
+           </div>
         </div>
       </div>
+
 
       <div className="container mx-auto mt-4">
         <div className="relative">
@@ -172,6 +311,41 @@ const Table = () => {
           </table>
         </div>
       </div>
+
+      <div className="container mx-auto mt-4 flex justify-end">
+        <div className="flex justify-end">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2"
+          >
+            Prev
+          </button>
+          {pageNumbers.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`${
+                pageNumber === currentPage
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+              } font-bold py-1 px-2 rounded mx-1`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded ml-2"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+
+
     </Wrapper>
   );
 };

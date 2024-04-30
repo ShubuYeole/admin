@@ -1,60 +1,31 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../components/wrapper";
+"use client"
+// import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import Axios
 import Link from "next/link";
+import { useEffect, useState } from 'react';
+import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const data = [
-    {
-      id: 1,
-      ownerName: "Tanmay Pawa",
-  ownerContact: "0901 117 7240",
-  ownerEmail: "tanmayrp97@gmail.com",
-  ownerCity: "Pune",
-  vehicleType: "eauto",
-  brand: "sdfwedfv",
-  model: "addfdf",
-  variant: "qwdescf",
-  location: "Puen",
-  rtoCode: "mh12",
-  batteryPower: "565677",
-  kilometresDriven: "445555",
-  bodyType: "",
-  color: "black",
-  registrationYear: "2024",
-  vehicleDescription: "jdsdcjdasc",
-  transmissionType: "Manual",
-  
-  interiorImages: [
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943166"
-  ],
-  frontImages: [
-    "uploads\\frontImages-1712900943154",
-    "uploads\\frontImages-1712900943157"
-  ],
-  sideImages: [
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943159"
-  ],
-  backImages: [
-    "uploads\\backImages-1712900943159",
-    "uploads\\backImages-1712900943160",
-    "uploads\\backImages-1712900943165"
-  ],
-  price: {
-    "currency": "USD",
-    "value": 45555555
-  },
-},
-  ];
-
+  const [data, setData] = useState([]); // State to store fetched data
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState('Approved'); // Initialize status state
 
+  // Fetch data from API when the component mounts
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Make GET request to your API endpoint
+      const response = await axios.get('http://51.79.225.217:5001/api/vehicles/eauto');
+      // Set fetched data to state
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
   const handleDelete = (id) => {
     // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
@@ -62,21 +33,21 @@ const Table = () => {
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
+    setCurrentPage(1); // Reset current page when changing entries per page
   };
 
-  const handlePageChange = (action) => {
-    if (action === 'prev') {
-      setCurrentPage(currentPage => Math.max(1, currentPage - 1));
-    } else if (action === 'next') {
-      setCurrentPage(currentPage => Math.min(Math.ceil(data.length / entriesPerPage), currentPage + 1));
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value); // Update status state
+    setStatus(e.target.value);
   };
 
+  const totalPages = Math.ceil(data.length / entriesPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
 
   return (
     <Wrapper>
@@ -102,8 +73,7 @@ const Table = () => {
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-            <button onClick={() => handlePageChange('prev')} disabled={currentPage === 1} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2">Prev</button>
-            <button onClick={() => handlePageChange('next')} disabled={currentPage * entriesPerPage >= data.length} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded">Next</button>
+
           </div>
         </div>
       </div>
@@ -113,7 +83,7 @@ const Table = () => {
           <table className="table w-full shadow-md rounded-lg overflow-hidden">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-3 py-2 text-left text-sm font-medium">ID</th>
+                {/* <th className="px-3 py-2 text-left text-sm font-medium">ID</th> */}
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Range</th>
@@ -125,7 +95,7 @@ const Table = () => {
             <tbody>
               {filteredData.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  <td className="px-3 py-2 text-left text-sm">{item.id}</td>
+                  {/* <td className="px-3 py-2 text-left text-sm">{item.id}</td> */}
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.kilometresDriven}</td>
@@ -147,12 +117,11 @@ const Table = () => {
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
                   <Link 
-              href={`/auto-detail/${item.id}`} 
-              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded" 
-              onClick={() => handleView(item.id)}
-               >
-              <span className="mdi mdi-eye"></span> 
-              </Link>
+  href={`/auto-detail/${item._id}`}>
+ <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+ <span className="mdi mdi-eye"></span> 
+ </button>
+</Link>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>
@@ -163,6 +132,44 @@ const Table = () => {
           </table>
         </div>
       </div>
+
+      <div className="container mx-auto mt-4 flex justify-end">
+        <div className="flex justify-end">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2"
+          >
+            Prev
+          </button>
+          {pageNumbers.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`${
+                pageNumber === currentPage
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+              } font-bold py-1 px-2 rounded mx-1`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded ml-2"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+
+
+
+
+
     </Wrapper>
   );
 };

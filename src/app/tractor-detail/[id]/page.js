@@ -1,70 +1,39 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+"use client";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Image from 'next/image'
+import Wrapper from "../../components/wrapper";
 
-// Static data for vehicles
-const TractorDetails = [
-  { 
-    id: 1,
-    ownerName: "Tanmay Pawar",
-    ownerContact: "0901 117 724",
-    ownerEmail: "tanmayrp97@gmail.com",
-    ownerCity: "Pune",
-    vehicleType: "etractor",
-    brand: "asss",
-    model: "sdddf",
-    variant: "nanjaj",
-    location: "Mumbai",
-    rtoCode: "mh12",
-    batteryPower: "56788",
-    kilometresDriven: "23223",
-    bodyType: null,
-    color: "Blue",
-    registrationYear: "2024",
-    vehicleDescription: "bdfgdf",
-    transmissionType: null,
-    interiorImages: [
-      "/images/property/BMW.jpeg",
-
-    ],
-    frontImages: [
-      "/images/property/BMW.jpeg",
-
-     ],
-    sideImages: [
-      "/images/property/BMW.jpeg",
-
-    ],
-    backImages: [
-      "/images/property/BMW.jpeg",
-
-    ],
-    price: {
-      "currency": "USD",
-      "value": 45688
-    },
-  },
-  // Add more vehicles as needed
-];
-
-export default function TractorDetail(props) {
-
+const TractorDetail = ({ params }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active"); // Initialize with a default value
   const [currentImageType, setCurrentImageType] = useState(null);
+  const [status, setStatus] = useState('Active'); // Set default status
   const [evCategory, setEvCategory] = useState('Top EVs'); 
+  // Sample fetched data, replace this with actual fetching logic
+  const [TractorData, setTractorData] = useState(null);
 
-  // Find the vehicle based on the provided ID
-  const Tractor = TractorDetails.find((Tractor) => Tractor?.id === parseInt(props?.params?.id || 0));
+  useEffect(() => {
+    // Fetch bike details based on the ID from the API
+    const fetchTractorData = async () => {
+      try {
+        const response = await fetch(`http://51.79.225.217:5001/api/vehicles/${params.id}`);
+        const jsonData = await response.json();
+        setTractorData(jsonData);
+      } catch (error) {
+        console.error('Error fetching car details:', error);
+      }
+    };
 
-  // If vehicle is not found, display a message
-  if (!Tractor) {
-    return <div>Tractor not found</div>;
+    fetchTractorData();
+  }, [params.id]);
+
+  if (!TractorData) {
+    return <div>Loading...</div>;
   }
+
+
 
 
   
@@ -81,16 +50,16 @@ export default function TractorDetail(props) {
   const goToPrevious = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + Tractor.interiorImages.length - 1) % Tractor.interiorImages.length);
+        setPhotoIndex((photoIndex + TractorData.interiorImages.length - 1) % TractorData.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + Tractor.frontImages.length - 1) % Tractor.frontImages.length);
+        setPhotoIndex((photoIndex + TractorData.frontImages.length - 1) % TractorData.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + Tractor.sideImages.length - 1) % Tractor.sideImages.length);
+        setPhotoIndex((photoIndex + TractorData.sideImages.length - 1) % TractorData.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + Tractor.backImages.length - 1) % Tractor.backImages.length);
+        setPhotoIndex((photoIndex + TractorData.backImages.length - 1) % TractorData.backImages.length);
         break;
       default:
         break;
@@ -100,16 +69,16 @@ export default function TractorDetail(props) {
   const goToNext = () => {
     switch (currentImageType) {
       case 'interior':
-        setPhotoIndex((photoIndex + 1) % Tractor.interiorImages.length);
+        setPhotoIndex((photoIndex + 1) % TractorData.interiorImages.length);
         break;
       case 'front':
-        setPhotoIndex((photoIndex + 1) % Tractor.frontImages.length);
+        setPhotoIndex((photoIndex + 1) % TractorData.frontImages.length);
         break;
       case 'side':
-        setPhotoIndex((photoIndex + 1) % Tractor.sideImages.length);
+        setPhotoIndex((photoIndex + 1) % TractorData.sideImages.length);
         break;
       case 'back':
-        setPhotoIndex((photoIndex + 1) % Tractor.backImages.length);
+        setPhotoIndex((photoIndex + 1) % TractorData.backImages.length);
         break;
       default:
         break;
@@ -143,7 +112,7 @@ export default function TractorDetail(props) {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
                 <div className="flex space-x-2">
-                  {Tractor.interiorImages.map((image, index) => (
+                  {TractorData.interiorImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'interior')}>
                       <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
                     </div>
@@ -153,7 +122,7 @@ export default function TractorDetail(props) {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Front Images</label>
                 <div className="flex space-x-2">
-                  {Tractor.frontImages.map((image, index) => (
+                  {TractorData.frontImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'front')}>
                       <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
                     </div>
@@ -163,7 +132,7 @@ export default function TractorDetail(props) {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Side Images</label>
                 <div className="flex space-x-2">
-                  {Tractor.sideImages.map((image, index) => (
+                  {TractorData.sideImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'side')}>
                       <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
                     </div>
@@ -173,7 +142,7 @@ export default function TractorDetail(props) {
               <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Back Images</label>
                 <div className="flex space-x-2">
-                  {Tractor.backImages.map((image, index) => (
+                  {TractorData.backImages.map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index, 'back')}>
                       <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
                     </div>
@@ -191,7 +160,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Brand</label>
     <input
       type="text"
-      value={Tractor.brand}
+      value={TractorData.brand}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -200,7 +169,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Model</label>
     <input
       type="text"
-      value={Tractor.model}
+      value={TractorData.model}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -218,7 +187,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Variant</label>
     <input
       type="text"
-      value={Tractor.variant}
+      value={TractorData.variant}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -227,7 +196,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Location</label>
     <input
       type="text"
-      value={Tractor.location}
+      value={TractorData.location}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -236,7 +205,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">RTO code</label>
     <input
       type="text"
-      value={Tractor.rtoCode}
+      value={TractorData.rtoCode}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -245,7 +214,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Battery Power</label>
     <input
       type="text"
-      value={Tractor.batteryPower}
+      value={TractorData.batteryPower}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -254,7 +223,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">kilometers Driven</label>
     <input
       type="text"
-      value={Tractor.kilometresDriven}
+      value={TractorData.kilometresDriven}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -263,7 +232,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Color</label>
     <input
       type="text"
-      value={Tractor.color}
+      value={TractorData.color}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -281,25 +250,25 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Registration Year</label>
     <input
       type="text"
-      value={Tractor.registrationYear}
+      value={TractorData.registrationYear}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
   </div>
-  <div className="mb-4">
+  {/* <div className="mb-4">
     <label className="block text-gray-700 font-bold mb-2">Transmission Type</label>
     <input
       type="text"
-      value={Tractor.transmissionType}
+      value={TractorData.transmissionType}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
-  </div>
+  </div> */}
   <div className="mb-4">
     <label className="block text-gray-700 font-bold mb-2">Owner Name</label>
     <input
       type="text"
-      value={Tractor.ownerName}
+      value={TractorData.ownerName}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -308,7 +277,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Contact</label>
     <input
       type="text"
-      value={Tractor.ownerContact}
+      value={TractorData.ownerContact}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -317,7 +286,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Email</label>
     <input
       type="text"
-      value={Tractor.ownerEmail}
+      value={TractorData.ownerEmail}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -326,7 +295,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner City</label>
     <input
       type="text"
-      value={Tractor.ownerCity}
+      value={TractorData.ownerCity}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -357,7 +326,7 @@ export default function TractorDetail(props) {
                 <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Vehicle Description</label>
                 <textarea
-                  value={Tractor.vehicleDescription}
+                  value={TractorData.vehicleDescription}
                   className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                   readOnly
                   rows="4"
@@ -369,7 +338,7 @@ export default function TractorDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Price</label>
     <input
       type="text"
-      value={Tractor.price}
+      value={TractorData.price}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -397,22 +366,22 @@ export default function TractorDetail(props) {
            {isOpen && (
           <Lightbox
             mainSrc={
-              currentImageType === 'interior' ? Tractor.interiorImages[photoIndex] :
-              currentImageType === 'front' ? Tractor.frontImages[photoIndex] :
-              currentImageType === 'side' ? Tractor.sideImages[photoIndex] :
-              Tractor.backImages[photoIndex]
+              currentImageType === 'interior' ? TractorData.interiorImages[photoIndex] :
+              currentImageType === 'front' ? TractorData.frontImages[photoIndex] :
+              currentImageType === 'side' ? TractorData.sideImages[photoIndex] :
+              TractorData.backImages[photoIndex]
             }
             nextSrc={
-              currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + 1) % Tractor.interiorImages.length] :
-              currentImageType === 'front' ? Tractor.frontImages[(photoIndex + 1) % Tractor.frontImages.length] :
-              currentImageType === 'side' ? Tractor.sideImages[(photoIndex + 1) % Tractor.sideImages.length] :
-              Tractor.backImages[(photoIndex + 1) % Tractor.backImages.length]
+              currentImageType === 'interior' ? TractorData.interiorImages[(photoIndex + 1) % TractorData.interiorImages.length] :
+              currentImageType === 'front' ? TractorData.frontImages[(photoIndex + 1) % TractorData.frontImages.length] :
+              currentImageType === 'side' ? TractorData.sideImages[(photoIndex + 1) % TractorData.sideImages.length] :
+              TractorData.backImages[(photoIndex + 1) % TractorData.backImages.length]
             }
             prevSrc={
-              currentImageType === 'interior' ? Tractor.interiorImages[(photoIndex + Tractor.interiorImages.length - 1) % Tractor.interiorImages.length] :
-              currentImageType === 'front' ? Tractor.frontImages[(photoIndex + Tractor.frontImages.length - 1) % Tractor.frontImages.length] :
-              currentImageType === 'side' ? Tractor.sideImages[(photoIndex + Tractor.sideImages.length - 1) % Tractor.sideImages.length] :
-              Tractor.backImages[(photoIndex + Tractor.backImages.length - 1) % Tractor.backImages.length]
+              currentImageType === 'interior' ? TractorData.interiorImages[(photoIndex + TractorData.interiorImages.length - 1) % Tractor.interiorImages.length] :
+              currentImageType === 'front' ? TractorData.frontImages[(photoIndex + TractorData.frontImages.length - 1) % Tractor.frontImages.length] :
+              currentImageType === 'side' ? TractorData.sideImages[(photoIndex + TractorData.sideImages.length - 1) % Tractor.sideImages.length] :
+              TractorData.backImages[(photoIndex + TractorData.backImages.length - 1) % TractorData.backImages.length]
             }
             onCloseRequest={closeLightbox}
             onMovePrevRequest={goToPrevious}
@@ -424,3 +393,4 @@ export default function TractorDetail(props) {
     </>
   );
 }
+export default TractorDetail
