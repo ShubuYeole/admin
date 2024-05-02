@@ -232,7 +232,7 @@ price: {
               <option value="20">20</option>
               <option value="30">30</option>
             </select>
-            &nbsp;entries per page
+            &nbsp;
           </div>
           <div className="flex items-center">
             <div className="mr-2">
