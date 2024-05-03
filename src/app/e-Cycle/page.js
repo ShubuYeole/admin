@@ -1,69 +1,36 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../components/wrapper";
+"use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Link from "next/link";
+import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const data = [
-    {
-      id: 1,
-      ownerName: "Tanmay Pawar",
-      ownerContact: "0901 117 7249",
-      ownerEmail: "tanmayrp97@gmail.com",
-      ownerCity: "Kharalwadi",
-      vehicleType: "ebike",
-      brand: "haja",
-      model: "hsns",
-      variant: "bav",
-      location: "Pune",
-      rtoCode: "mh122",
-      batteryPower: "4566",
-      kilometresDriven: "45677",
-      bodyType: "",
-      color: "Red",
-      registrationYear: "2024",
-      vehicleDescription: "babanan",
-      transmissionType: "Manual",
-  interiorImages: [
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943166"
-  ],
-  frontImages: [
-    "uploads\\frontImages-1712900943154",
-    "uploads\\frontImages-1712900943157"
-  ],
-  sideImages: [
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943159"
-  ],
-  backImages: [
-    "uploads\\backImages-1712900943159",
-    "uploads\\backImages-1712900943160",
-    "uploads\\backImages-1712900943165"
-  ],
-  price: {
-    "currency": "USD",
-    "value": 45555555
-  },
-},
-  ];
-
+  const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState('Approved'); // Initialize status state
+  const [status, setStatus] = useState('Approved');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://51.79.225.217:5001/api/vehicles/ecycle');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleDelete = (id) => {
-    // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
   };
 
-
-
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
-    setCurrentPage(1); // Reset current page when changing entries per page
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -74,16 +41,33 @@ const Table = () => {
     setStatus(e.target.value);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const totalPages = Math.ceil(data.length / entriesPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
+
+  // Filter data based on search query
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) =>
+        typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  ).slice(startIndex, endIndex);
 
   return (
     <Wrapper>
       <div className="container mx-auto mt-32">
         <div className="flex justify-between mb-6">
           <div>
-            <select value={entriesPerPage} onChange={handleEntriesPerPageChange} className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3">
+            <select
+              value={entriesPerPage}
+              onChange={handleEntriesPerPageChange}
+              className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
+            >
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="30">30</option>
@@ -94,15 +78,15 @@ const Table = () => {
             <div className="mr-2">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={handleSearch}
                 className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
                 placeholder="Search..."
               />
-              <button className="px-3 py-1"> {/* Icon for search button (optional) */}</button>
             </div>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-
           </div>
         </div>
       </div>
@@ -115,20 +99,18 @@ const Table = () => {
                 <th className="px-3 py-2 text-left text-sm font-medium">ID</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
-                <th className="px-4 py-2 text-left text-sm font-medium">Range</th>
-                {/* <th className="px-4 py-2 text-left text-sm font-medium">T</th> */}
+                <th className="px-4 py-2 text-left text-sm font-medium">Battery Power</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  <td className="px-3 py-2 text-left text-sm">{item.id}</td>
+              {filteredData.map((item, index) => (
+                <tr key={index} className="hover:bg-gray-100 border-b border-gray-200">
+                  <td className="px-3 py-2 text-left text-sm">{startIndex + index + 1}</td>
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
-                  <td className="px-4 py-2 text-left text-sm">{item. kilometresDriven}</td>
-                  {/* <td className="px-4 py-2 text-left text-sm">{item.type}</td> */}
+                  <td className="px-4 py-2 text-left text-sm">{item.batteryPower}</td>
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -144,15 +126,12 @@ const Table = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-2 text-left text-sm">
-                    <Link 
-              href={`/ecycle-detail/${item.id}`} 
-              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-2 mr-1 rounded" 
-              onClick={() => handleView(item.id)}
-               >
-              <span className="mdi mdi-eye"></span> 
-              </Link>
-
+                  <td className="px-4 py-2 text-left text-sm">
+                    <Link href={`/ecycle-detail/${item._id}`}>
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+                        <span className="mdi mdi-eye"></span>
+                      </button>
+                    </Link>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>
@@ -195,12 +174,6 @@ const Table = () => {
           </button>
         </div>
       </div>
-
-
-
-
-
-
     </Wrapper>
   );
 };

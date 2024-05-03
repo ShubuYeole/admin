@@ -1,39 +1,36 @@
 "use client"
-// import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Link from "next/link";
-import { useEffect, useState } from 'react';
 import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const [data, setData] = useState([]); // State to store fetched data
+  const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState('Approved'); // Initialize status state
+  const [status, setStatus] = useState('Approved');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch data from API when the component mounts
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      // Make GET request to your API endpoint
       const response = await axios.get('http://51.79.225.217:5001/api/vehicles/eauto');
-      // Set fetched data to state
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
   const handleDelete = (id) => {
-    // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
   };
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
-    setCurrentPage(1); // Reset current page when changing entries per page
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -44,10 +41,20 @@ const Table = () => {
     setStatus(e.target.value);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const totalPages = Math.ceil(data.length / entriesPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
 
+  const filteredData = data.filter(item => {
+    return Object.values(item).some(val =>
+      typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }).slice(startIndex, endIndex);
 
   return (
     <Wrapper>
@@ -67,13 +74,13 @@ const Table = () => {
                 type="text"
                 className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearch}
               />
-              <button className="px-3 py-1"> {/* Icon for search button (optional) */}</button>
             </div>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-
           </div>
         </div>
       </div>
@@ -83,23 +90,21 @@ const Table = () => {
           <table className="table w-full shadow-md rounded-lg overflow-hidden">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                {/* <th className="px-3 py-2 text-left text-sm font-medium">ID</th> */}
+                <th className="px-3 py-2 text-left text-sm font-medium">ID</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Range</th>
-                {/* <th className="px-4 py-2 text-left text-sm font-medium">T</th> */}
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  {/* <td className="px-3 py-2 text-left text-sm">{item.id}</td> */}
+              {filteredData.map((item, index) => (
+                <tr key={index} className="hover:bg-gray-100 border-b border-gray-200">
+                  <td className="px-3 py-2 text-left text-sm">{startIndex + index + 1}</td>
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.kilometresDriven}</td>
-                  {/* <td className="px-4 py-2 text-left text-sm">{item.type}</td> */}
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -116,12 +121,11 @@ const Table = () => {
                     </div>
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
-                  <Link 
-  href={`/auto-detail/${item._id}`}>
- <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
- <span className="mdi mdi-eye"></span> 
- </button>
-</Link>
+                    <Link href={`/auto-detail/${item._id}`}>
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+                        <span className="mdi mdi-eye"></span> 
+                      </button>
+                    </Link>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>
@@ -164,12 +168,6 @@ const Table = () => {
           </button>
         </div>
       </div>
-
-
-
-
-
-
     </Wrapper>
   );
 };

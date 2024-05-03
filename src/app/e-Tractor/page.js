@@ -6,26 +6,30 @@ import Link from "next/link";
 import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const [data, setData] = useState([]); // State to store fetched data
+  const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState('Approved'); // Initialize status state
+  const [searchQuery, setSearchQuery] = useState(''); // Initialize searchQuery state
+  const [loading, setLoading] = useState(true); // Initialize loading state
 
   // Fetch data from API when the component mounts
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://51.79.225.217:5001/api/vehicles/etractor');
+        const jsonData = await response.json();
+        setData(jsonData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      // Make GET request to your API endpoint
-      const response = await axios.get('http://51.79.225.217:5001/api/vehicles/etractor');
-      // Set fetched data to state
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
   const handleDelete = (id) => {
     // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
@@ -44,9 +48,22 @@ const Table = () => {
     setStatus(e.target.value);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const totalPages = Math.ceil(data.length / entriesPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
+
+  // Filter data based on search query
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) =>
+        typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  ).slice(startIndex, endIndex);
 
   return (
     <Wrapper>
@@ -64,10 +81,11 @@ const Table = () => {
             <div className="mr-2">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={handleSearch}
                 className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
                 placeholder="Search..."
               />
-              <button className="px-3 py-1"> {/* Icon for search button (optional) */}</button>
             </div>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
@@ -86,19 +104,17 @@ const Table = () => {
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Range</th>
-                {/* <th className="px-4 py-2 text-left text-sm font-medium">T</th> */}
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  <td className="px-3 py-2 text-left text-sm">{item.id}</td>
+              {filteredData.map((item, index) => (
+                <tr key={index} className="hover:bg-gray-100 border-b border-gray-200">
+                  <td className="px-3 py-2 text-left text-sm">{startIndex + index + 1}</td>
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.kilometresDriven}</td>
-                  {/* <td className="px-4 py-2 text-left text-sm">{item.type}</td> */}
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -115,12 +131,12 @@ const Table = () => {
                     </div>
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
-                  <Link 
-  href={`/tractor-detail/${item._id}`}>
- <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
- <span className="mdi mdi-eye"></span> 
- </button>
-</Link>
+                    <Link href={`/tractor-detail/${item._id}`}>
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+                        <span className="mdi mdi-eye"></span> 
+                      </button>
+                    </Link>
+                
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>

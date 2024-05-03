@@ -1,43 +1,35 @@
-"use client"
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import Link from "next/link";
-
 import Wrapper from "../components/wrapper";
 
 const Table = () => {
   const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState('Approved'); // Initialize status state
-  const [searchQuery, setSearchQuery] = useState(''); // Initialize searchQuery state
-  const [loading, setLoading] = useState(true); // Initialize loading state
+  const [status, setStatus] = useState('Approved');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch data from API when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://51.79.225.217:5001/api/vehicles/edrone');
-        const jsonData = await response.json();
-        setData(jsonData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://51.79.225.217:5001/api/vehicles/eauto');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   const handleDelete = (id) => {
-    // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
   };
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
-    setCurrentPage(1); // Reset current page when changing entries per page
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -57,13 +49,11 @@ const Table = () => {
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = currentPage * entriesPerPage;
 
-  // Filter data based on search query
-  const filteredData = data.filter((item) =>
-    Object.values(item).some(
-      (val) =>
-        typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  ).slice(startIndex, endIndex);
+  const filteredData = data.filter(item => {
+    return Object.values(item).some(val =>
+      typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }).slice(startIndex, endIndex);
 
   return (
     <Wrapper>
@@ -81,10 +71,10 @@ const Table = () => {
             <div className="mr-2">
               <input
                 type="text"
-                value={searchQuery}
-                onChange={handleSearch}
                 className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearch}
               />
             </div>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
@@ -102,7 +92,7 @@ const Table = () => {
                 <th className="px-3 py-2 text-left text-sm font-medium">ID</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
-                <th className="px-4 py-2 text-left text-sm font-medium">Variant</th>
+                <th className="px-4 py-2 text-left text-sm font-medium">Range</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
@@ -113,7 +103,7 @@ const Table = () => {
                   <td className="px-3 py-2 text-left text-sm">{startIndex + index + 1}</td>
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
-                  <td className="px-4 py-2 text-left text-sm">{item.variant}</td>
+                  <td className="px-4 py-2 text-left text-sm">{item.kilometresDriven}</td>
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -130,7 +120,7 @@ const Table = () => {
                     </div>
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
-                    <Link href={`/drone-detail/${item._id}`}>
+                    <Link href={`/auto-detail/${item._id}`}>
                       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
                         <span className="mdi mdi-eye"></span> 
                       </button>

@@ -1,73 +1,40 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../../components/wrapper";
+"use client";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import Lightbox from 'react-18-image-lightbox';
 import 'react-18-image-lightbox/style.css';
-import Image from 'next/image';
+import Wrapper from "../../components/wrapper";
 
-
-const BikeDetails = [
-  { 
-    id: 1,
-    ownerName: "Tanmay Pawar",
-    ownerContact: "0901 117 7249",
-    ownerEmail: "tanmayrp97@gmail.com",
-    ownerCity: "Kharalwadi",
-    vehicleType: "ebike",
-    brand: "haja",
-    model: "hsns",
-    variant: "bav",
-    location: "Pune",
-    rtoCode: "mh122",
-    batteryPower: "4566",
-    kilometresDriven: "45677",
-    bodyType: "",
-    color: "Red",
-    registrationYear: "2024",
-    vehicleDescription: "babanan",
-    transmissionType: "Manual",
-    interiorImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    frontImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    sideImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    backImages: [
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg",
-      "/images/property/BMW.jpeg"
-    ],
-    price: {
-      currency: "INR",
-      value: 45667
-    },
-  },
-  // Add more vehicles as needed
-];
-
-export default function BikeDetail(props) {
+const BikeDetail = ({ params }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [status, setStatus] = useState("Active");
-  
   const [currentImageType, setCurrentImageType] = useState(null);
-  const [evCategory, setEvCategory] = useState('Top EVs'); 
+  const [status, setStatus] = useState('Approve');
+  const [evCategory, setEvCategory] = useState('Top EVs');
+  
 
-  const Bike = BikeDetails.find((Bike) => Bike?.id === parseInt(props?.params?.id || 0));
-  if (!Bike) {
-    return <div>Bike not found</div>;
+
+  // Sample fetched data, replace this with actual fetching logic
+  const [bikeData, setBikeData] = useState(null);
+
+  useEffect(() => {
+    // Fetch bike details based on the ID from the API
+    const fetchBikeData = async () => {
+      try {
+        const response = await fetch(`http://51.79.225.217:5001/api/vehicles/${params.id}`);
+        const jsonData = await response.json();
+        setBikeData(jsonData);
+      } catch (error) {
+        console.error('Error fetching bike details:', error);
+      }
+    };
+
+    fetchBikeData();
+  }, [params.id]);
+
+  if (!bikeData) {
+    return <div>Loading...</div>;
   }
-  
-  
 
   const handleImageClick = (index, imageType) => {
     setPhotoIndex(index);
@@ -79,110 +46,54 @@ export default function BikeDetail(props) {
     setIsOpen(false);
   };
 
+
+
  
  
   const goToPrevious = () => {
-    switch (currentImageType) {
-      case 'interior':
-        setPhotoIndex((photoIndex + Bike.interiorImages.length - 1) % Bike.interiorImages.length);
-        break;
-      case 'front':
-        setPhotoIndex((photoIndex + Bike.frontImages.length - 1) % Bike.frontImages.length);
-        break;
-      case 'side':
-        setPhotoIndex((photoIndex + Bike.sideImages.length - 1) % Bike.sideImages.length);
-        break;
-      case 'back':
-        setPhotoIndex((photoIndex + Bike.backImages.length - 1) % Bike.backImages.length);
-        break;
-      default:
-        break;
-    }
+    const images = bikeData[currentImageType + 'Images'];
+    setPhotoIndex((photoIndex + images.length - 1) % images.length);
   };
-  
-  const goToNext = () => {
-    switch (currentImageType) {
-      case 'interior':
-        setPhotoIndex((photoIndex + 1) % Bike.interiorImages.length);
-        break;
-      case 'front':
-        setPhotoIndex((photoIndex + 1) % Bike.frontImages.length);
-        break;
-      case 'side':
-        setPhotoIndex((photoIndex + 1) % Bike.sideImages.length);
-        break;
-      case 'back':
-        setPhotoIndex((photoIndex + 1) % Bike.backImages.length);
-        break;
-      default:
-        break;
-    }
-  };
-  
 
-  
+  const goToNext = () => {
+    const images = bikeData[currentImageType + 'Images'];
+    setPhotoIndex((photoIndex + 1) % images.length);
+  };
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
-  }
-    
-  
+  };
 
   const handleEvCategoryChange = (event) => {
-      setEvCategory(event.target.value);
-      
-    };
+    setEvCategory(event.target.value);
+  };
+
+  // Function to render images based on type
+  const renderImages = (type) => {
+    return (
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">{`${type.charAt(0).toUpperCase() + type.slice(1)} Images`}</label>
+        <div className="flex space-x-2">
+          {bikeData[type + 'Images'].map((image, index) => (
+            <div key={index} onClick={() => handleImageClick(index, type)}>
+              <img src={image} width={200} height={150} alt={`${type.charAt(0).toUpperCase() + type.slice(1)} Image ${index + 1}`} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <Wrapper>     
-<section className="relative md:pb-24 pb-16 mt-20 px-4">
+    <Wrapper>
+      <section className="relative md:pb-24 pb-16 mt-20 px-4">
         <div className="max-w-screen-xl mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl font-bold mb-4">Bike Details</h1>
           <div className="grid grid-cols-1 gap-4">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Interior Images</label>
-              <div className="flex space-x-2">
-                {Bike.interiorImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'interior')}>
-                    <Image src={image} width={200} height={150} alt={`Interior Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Front Images</label>
-              <div className="flex space-x-2">
-                {Bike.frontImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'front')}>
-                    <Image src={image} width={200} height={150} alt={`Front Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Side Images</label>
-              <div className="flex space-x-2">
-                {Bike.sideImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'side')}>
-                    <Image src={image} width={200} height={150} alt={`Side Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Back Images</label>
-              <div className="flex space-x-2">
-                {Bike.backImages.map((image, index) => (
-                  <div key={index} onClick={() => handleImageClick(index, 'back')}>
-                    <Image src={image} width={200} height={150} alt={`Back Image ${index + 1}`} />
-                  </div>
-                ))}
-              </div>
-</div>
-
+            {['interior', 'front', 'side', 'back'].map((type) => renderImages(type))}
           </div>
         </div>
-        
+
 
 
               <div className="grid grid-cols-2 gap-5">
@@ -191,7 +102,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Brand</label>
     <input
       type="text"
-      value={Bike.brand}
+      value={bikeData.brand}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -200,7 +111,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Model</label>
     <input
       type="text"
-      value={Bike.model}
+      value={bikeData.model}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -210,7 +121,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Variant</label>
     <input
       type="text"
-      value={Bike.variant}
+      value={bikeData.variant}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -219,7 +130,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Location</label>
     <input
       type="text"
-      value={Bike.location}
+      value={bikeData.location}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -228,7 +139,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">RTO code</label>
     <input
       type="text"
-      value={Bike.rtoCode}
+      value={bikeData.rtoCode}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -237,7 +148,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Battery Power</label>
     <input
       type="text"
-      value={Bike.batteryPower}
+      value={bikeData.batteryPower}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -246,7 +157,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">kilometers Driven</label>
     <input
       type="text"
-      value={Bike.kilometresDriven}
+      value={bikeData.kilometresDriven}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -255,7 +166,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Color</label>
     <input
       type="text"
-      value={Bike.color}
+      value={bikeData.color}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -273,7 +184,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Registration Year</label>
     <input
       type="text"
-      value={Bike.registrationYear}
+      value={bikeData.registrationYear}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -282,7 +193,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Transmission Type</label>
     <input
       type="text"
-      value={Bike.transmissionType}
+      value={bikeData.transmissionType}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -291,7 +202,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Name</label>
     <input
       type="text"
-      value={Bike.ownerName}
+      value={bikeData.ownerName}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -300,7 +211,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Contact</label>
     <input
       type="text"
-      value={Bike.ownerContact}
+      value={bikeData.ownerContact}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -309,7 +220,7 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner Email</label>
     <input
       type="text"
-      value={Bike.ownerEmail}
+      value={bikeData.ownerEmail}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
@@ -318,12 +229,24 @@ export default function BikeDetail(props) {
     <label className="block text-gray-700 font-bold mb-2">Owner City</label>
     <input
       type="text"
-      value={Bike.ownerCity}
+      value={bikeData.ownerCity}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       readOnly
     />
   </div>
 </div>
+
+<div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2">Price</label>
+          <input
+            type="text"
+            value={`${bikeData.price.value} ${bikeData.price.currency}`}
+            className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+            readOnly
+          />
+        </div>
+
+
 
 
 <div className="mb-4 relative">
@@ -351,7 +274,7 @@ export default function BikeDetail(props) {
                 <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Vehicle Description</label>
                 <textarea
-                  value={Bike.vehicleDescription}
+                  value={bikeData.vehicleDescription}
                   className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                   readOnly
                   rows="4"
@@ -359,27 +282,20 @@ export default function BikeDetail(props) {
                 </div>
 
 
-                <div className="mb-4">
-    <label className="block text-gray-700 font-bold mb-2">Price</label>
-    <input
-      type="text"
-      value={Bike.price}
-      className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-      readOnly
-    />
-  </div>
 
 
-  <div className="mb-4 relative">
-  <label className="block text-gray-700 font-bold mb-2">Status</label>
+
+                <div className="mb-4 relative">
+  <label className="block text-gray-700 font-bold mb-2">Request</label>
   <div className="relative">
     <select
       value={status}
       onChange={handleStatusChange}
       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 pr-8" // Added pr-8 for padding on the right to accommodate the icon
     >
-      <option value="Active">Active</option>
-      <option value="Inactive">Inactive</option>
+              <option value="Approve">Approve</option>
+              <option value="Disapprove">Disapprove</option>
+
     </select>
     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -398,30 +314,30 @@ export default function BikeDetail(props) {
         <Lightbox
           mainSrc={
             currentImageType === 'interior'
-              ? Bike.interiorImages[photoIndex]
+              ? bikeData.interiorImages[photoIndex]
               : currentImageType === 'front'
-              ? Bike.frontImages[photoIndex]
+              ?bikeData.frontImages[photoIndex]
               : currentImageType === 'side'
-              ? Bike.sideImages[photoIndex]
-              : Bike.backImages[photoIndex]
+              ? bikeData.sideImages[photoIndex]
+              : bikeData.backImages[photoIndex]
           }
           nextSrc={
             currentImageType === 'interior'
-              ? Bike.interiorImages[(photoIndex + 1) % Bike.interiorImages.length]
+              ? bikeData.interiorImages[(photoIndex + 1) % bikeData.interiorImages.length]
               : currentImageType === 'front'
-              ? Bike.frontImages[(photoIndex + 1) % Bike.frontImages.length]
+              ? bikeData.frontImages[(photoIndex + 1) % bikeData.frontImages.length]
               : currentImageType === 'side'
-              ? Bike.sideImages[(photoIndex + 1) % Bike.sideImages.length]
-              : Bike.backImages[(photoIndex + 1) % Bike.backImages.length]
+              ? bikeData.sideImages[(photoIndex + 1) % bikeData.sideImages.length]
+              : bikeData.backImages[(photoIndex + 1) % bikeData.backImages.length]
           }
           prevSrc={
             currentImageType === 'interior'
-              ? Bike.interiorImages[(photoIndex + Bike.interiorImages.length - 1) % Bike.interiorImages.length]
+              ? bikeData.interiorImages[(photoIndex + bikeData.interiorImages.length - 1) % bikeData.interiorImages.length]
               : currentImageType === 'front'
-              ? Bike.frontImages[(photoIndex + Bike.frontImages.length - 1) % Bike.frontImages.length]
+              ? bikeData.frontImages[(photoIndex + bikeData.frontImages.length - 1) % bikeData.frontImages.length]
               : currentImageType === 'side'
-              ? Bike.sideImages[(photoIndex + Bike.sideImages.length - 1) % Bike.sideImages.length]
-              : Bike.backImages[(photoIndex + Bike.backImages.length - 1) % Bike.backImages.length]
+              ? bikeData.sideImages[(photoIndex + bikeData.sideImages.length - 1) % bikeData.sideImages.length]
+              : bikeData.backImages[(photoIndex + bikeData.backImages.length - 1) % bikeData.backImages.length]
           }
           onCloseRequest={closeLightbox}
           onMovePrevRequest={goToPrevious}
@@ -436,3 +352,4 @@ export default function BikeDetail(props) {
       
   );
 }
+export default BikeDetail;

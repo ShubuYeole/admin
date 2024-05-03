@@ -1,206 +1,36 @@
-'use client'
-import React, { useState } from 'react';
-import Wrapper from "../components/wrapper";
+"use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Link from "next/link";
+import Wrapper from "../components/wrapper";
 
 const Table = () => {
-  const data = [
-    {
-      id: 1,
-      ownerName: "tanmay",
-  ownerContact: "9886536272",
-  ownerEmail: "tanmay@gmail.com",
-  ownerCity: "Puen",
-  vehicleType: "ecycle",
-  brand: "honda",
-  model: "hs",
-  variant: "bah",
-  location: "pune",
-  rtoCode: null,
-  batteryPower: "34444",
-  kilometresDriven: null,
-  bodyType: null,
-  color: "red",
-  registrationYear: "2024",
-  vehicleDescription: "hgshswjsk",
-  transmissionType: null,
-  interiorImages: [
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943165",
-    "uploads\\interiorImages-1712900943166"
-  ],
-  frontImages: [
-    "uploads\\frontImages-1712900943154",
-    "uploads\\frontImages-1712900943157"
-  ],
-  sideImages: [
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943158",
-    "uploads\\sideImages-1712900943159"
-  ],
-  backImages: [
-    "uploads\\backImages-1712900943159",
-    "uploads\\backImages-1712900943160",
-    "uploads\\backImages-1712900943165"
-  ],
-  price: {
-    "currency": "USD",
-    "value": 45555555
-  },
-},
-
-{
-  id: 2,
-  ownerName: "tanmay",
-ownerContact: "9886536272",
-ownerEmail: "tanmay@gmail.com",
-ownerCity: "Puen",
-vehicleType: "ecycle",
-brand: "honda",
-model: "hs",
-variant: "bah",
-location: "pune",
-rtoCode: null,
-batteryPower: "34444",
-kilometresDriven: null,
-bodyType: null,
-color: "red",
-registrationYear: "2024",
-vehicleDescription: "hgshswjsk",
-transmissionType: null,
-interiorImages: [
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943166"
-],
-frontImages: [
-"uploads\\frontImages-1712900943154",
-"uploads\\frontImages-1712900943157"
-],
-sideImages: [
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943159"
-],
-backImages: [
-"uploads\\backImages-1712900943159",
-"uploads\\backImages-1712900943160",
-"uploads\\backImages-1712900943165"
-],
-price: {
-"currency": "USD",
-"value": 45555555
-},
-
-
-},
-
-
-{
-  id: 3,
-  ownerName: "tanmay",
-ownerContact: "9886536272",
-ownerEmail: "tanmay@gmail.com",
-ownerCity: "Puen",
-vehicleType: "ecycle",
-brand: "honda",
-model: "hs",
-variant: "bah",
-location: "pune",
-rtoCode: null,
-batteryPower: "34444",
-kilometresDriven: null,
-bodyType: null,
-color: "red",
-registrationYear: "2024",
-vehicleDescription: "hgshswjsk",
-transmissionType: null,
-interiorImages: [
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943166"
-],
-frontImages: [
-"uploads\\frontImages-1712900943154",
-"uploads\\frontImages-1712900943157"
-],
-sideImages: [
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943159"
-],
-backImages: [
-"uploads\\backImages-1712900943159",
-"uploads\\backImages-1712900943160",
-"uploads\\backImages-1712900943165"
-],
-price: {
-"currency": "USD",
-"value": 45555555
-},
-},
-{
-  id: 4,
-  ownerName: "tanmay",
-ownerContact: "9886536272",
-ownerEmail: "tanmay@gmail.com",
-ownerCity: "Puen",
-vehicleType: "ecycle",
-brand: "honda",
-model: "hs",
-variant: "bah",
-location: "pune",
-rtoCode: null,
-batteryPower: "34444",
-kilometresDriven: null,
-bodyType: null,
-color: "red",
-registrationYear: "2024",
-vehicleDescription: "hgshswjsk",
-transmissionType: null,
-interiorImages: [
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943165",
-"uploads\\interiorImages-1712900943166"
-],
-frontImages: [
-"uploads\\frontImages-1712900943154",
-"uploads\\frontImages-1712900943157"
-],
-sideImages: [
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943158",
-"uploads\\sideImages-1712900943159"
-],
-backImages: [
-"uploads\\backImages-1712900943159",
-"uploads\\backImages-1712900943160",
-"uploads\\backImages-1712900943165"
-],
-price: {
-"currency": "USD",
-"value": 45555555
-},
-},
-  ];
-
-
+  const [data, setData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState('Approved'); // Initialize status state
-  
-  
-  
+  const [status, setStatus] = useState('Approved');
+  const [searchQuery, setSearchQuery] = useState('');
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://51.79.225.217:5001/api/vehicles/ebike');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleDelete = (id) => {
-    // Perform deletion logic here
     alert(`Item with ID ${id} deleted`);
   };
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
-    setCurrentPage(1); // Reset current page when changing entries per page
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -211,24 +41,28 @@ price: {
     setStatus(e.target.value);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const totalPages = Math.ceil(data.length / entriesPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
 
-
-  
+  const filteredData = data.filter(item => {
+    return Object.values(item).some(val =>
+      typeof val === 'string' && val.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }).slice(startIndex, endIndex);
 
   return (
     <Wrapper>
-          <div className="container mx-auto mt-32">
+      <div className="container mx-auto mt-32">
         <div className="flex justify-between mb-6">
           <div>
-            <select
-              value={entriesPerPage}
-              onChange={handleEntriesPerPageChange}
-              className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
-            >
-              <option value="3">3</option>
+            <select value={entriesPerPage} onChange={handleEntriesPerPageChange} className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3">
+              <option value="10">10</option>
               <option value="20">20</option>
               <option value="30">30</option>
             </select>
@@ -240,16 +74,16 @@ price: {
                 type="text"
                 className="bg-gray-100 border-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-md py-1 px-3"
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearch}
               />
-              <button className="px-3 py-1"> {/* Icon for search button (optional) */}</button>
             </div>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-           </div>
+          </div>
         </div>
       </div>
-
 
       <div className="container mx-auto mt-4">
         <div className="relative">
@@ -260,19 +94,17 @@ price: {
                 <th className="px-3 py-2 text-left text-sm font-medium">Name</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Model</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Variant</th>
-                {/* <th className="px-4 py-2 text-left text-sm font-medium">T</th> */}
                 <th className="px-4 py-2 text-left text-sm font-medium">Request</th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-100 border-b border-gray-200">
-                  <td className="px-3 py-2 text-left text-sm">{item.id}</td>
+              {filteredData.map((item, index) => (
+                <tr key={index} className="hover:bg-gray-100 border-b border-gray-200">
+                  <td className="px-3 py-2 text-left text-sm">{startIndex + index + 1}</td>
                   <td className="px-3 py-2 text-left text-sm">{item.brand}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.model}</td>
                   <td className="px-4 py-2 text-left text-sm">{item.variant}</td>
-                  {/* <td className="px-4 py-2 text-left text-sm">{item.type}</td> */}
                   <td className="px-4 py-2 text-left text-sm">
                     <div className="relative inline-block w-full">
                       <select
@@ -289,18 +121,11 @@ price: {
                     </div>
                   </td>
                   <td className="px-4 py-2 text-left text-sm">
-                  <Link 
-              href={`/bike-detail/${item.id}`} 
-              className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded" 
-              onClick={() => handleView(item.id)}
-               >
-              <span className="mdi mdi-eye"></span> 
-              </Link>
-
-  
-                  
-  
-                
+                    <Link href={`/bike-detail/${item._id}`}>
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 mr-1 rounded">
+                        <span className="mdi mdi-eye"></span> 
+                      </button>
+                    </Link>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 mr-1 rounded" onClick={() => handleDelete(item.id)}>
                       <span className="mdi mdi-delete"></span>
                     </button>
@@ -343,9 +168,6 @@ price: {
           </button>
         </div>
       </div>
-
-
-
     </Wrapper>
   );
 };

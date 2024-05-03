@@ -5,12 +5,14 @@ import Wrapper from "../components/wrapper";
 
 const Table = () => {
   const [data, setData] = useState([]);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Fetching data from the server
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://localhost:5000/api/users');
+        const response = await fetch('http://51.79.225.217:5001/api/users');
         const jsonData = await response.json();
   
         // Update the status for each user in the fetched data
@@ -27,8 +29,7 @@ const Table = () => {
     fetchData();
   }, []);
 
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  
 
   const handleDelete = (id) => {
     // Perform deletion logic here
@@ -37,18 +38,23 @@ const Table = () => {
 
   const handleEntriesPerPageChange = (e) => {
     setEntriesPerPage(parseInt(e.target.value));
+    setCurrentPage(1); // Reset current page when changing entries per page
   };
 
-  const handlePageChange = (action) => {
-    if (action === 'prev') {
-      setCurrentPage(currentPage => Math.max(1, currentPage - 1));
-    } else if (action === 'next') {
-      setCurrentPage(currentPage => Math.min(Math.ceil(data.length / entriesPerPage), currentPage + 1));
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
 
-  const filteredData = data.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+  const totalPages = Math.ceil(data.length / entriesPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
+  const filteredData = data.slice(startIndex, endIndex);
+
 
   return (
     <Wrapper>
@@ -60,7 +66,7 @@ const Table = () => {
               <option value="20">20</option>
               <option value="30">30</option>
             </select>
-            &nbsp;entries per page
+            &nbsp;
           </div>
           <div className="flex items-center">
             <div className="mr-2">
@@ -74,8 +80,6 @@ const Table = () => {
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
               Add New
             </button>
-            <button onClick={() => handlePageChange('prev')} disabled={currentPage === 1} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2">Prev</button>
-            <button onClick={() => handlePageChange('next')} disabled={currentPage * entriesPerPage >= data.length} className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded">Next</button>
           </div>
         </div>
       </div>
@@ -118,8 +122,40 @@ const Table = () => {
           </table>
         </div>
       </div>
+      <div className="container mx-auto mt-4 flex justify-end">
+        <div className="flex justify-end">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded mr-2"
+          >
+            Prev
+          </button>
+          {pageNumbers.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`${
+                pageNumber === currentPage
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+              } font-bold py-1 px-2 rounded mx-1`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-1 px-2 rounded ml-2"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </Wrapper>
   );
 };
 
 export default Table;
+
